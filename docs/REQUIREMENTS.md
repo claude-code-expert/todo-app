@@ -25,6 +25,7 @@
 **처리 규칙**:
 - 생성 시 status는 항상 BACKLOG
 - 생성 시 position은 해당 칼럼의 최솟값 - 1024 (맨 위 배치)
+- 칼럼에 티켓이 없을 경우 position = 0
 - createdAt, updatedAt 자동 설정
 
 **검증 에러 메시지**:
@@ -200,6 +201,17 @@
 ### NFR-004: 데이터 무결성
 - 드래그앤드롭 낙관적 업데이트: UI 즉시 반영 → API 성공 시 확정, 실패 시 롤백
 - position 값은 정수로 관리, 충돌 시 재정렬
+- 프론트엔드(Zod) + 백엔드(Zod) 이중 검증
+
+### NFR-005: 브라우저 호환성
+- Chrome, Safari, Firefox, Edge 최신 2개 버전 지원
+- IE 미지원
+
+### NFR-006: 배포 환경
+- Vercel (Next.js 네이티브 배포, git push 자동 배포)
+- Vercel Postgres (Neon) — 서버리스 최적화
+- HTTPS 기본 제공
+- PR별 프리뷰 배포 자동 생성
 
 ---
 
