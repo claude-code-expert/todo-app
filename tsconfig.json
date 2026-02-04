@@ -16,6 +16,7 @@
     "plugins": [{ "name": "next" }],
     "paths": {
       "@/*": ["./src/*"],
+      "@/app/*": ["./app/*"],
       "@/shared/*": ["./src/shared/*"],
       "@/server/*": ["./src/server/*"],
       "@/client/*": ["./src/client/*"]

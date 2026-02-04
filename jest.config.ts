@@ -8,10 +8,11 @@ const config: Config = {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@/app/(.*)$': '<rootDir>/app/$1',
     '^@/shared/(.*)$': '<rootDir>/src/shared/$1',
     '^@/server/(.*)$': '<rootDir>/src/server/$1',
     '^@/client/(.*)$': '<rootDir>/src/client/$1',
+    '^@/(.*)$': '<rootDir>/src/$1',
   },
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
 };
