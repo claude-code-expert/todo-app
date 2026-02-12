@@ -19,7 +19,7 @@ src/shared/에서 타입과 검증 스키마를 공유한다.
 - Styling: Tailwind CSS 4
 - Drag & Drop: @dnd-kit/core + @dnd-kit/sortable
 - ORM: Drizzle ORM
-- DB: PostgreSQL (로컬 개발), Vercel Postgres (Neon)
+- DB: PostgreSQL (로컬 개발), Vercel Postgres (배포)
 - Validation: Zod
 - Testing: Jest + React Testing Library
 - Deployment: Vercel
@@ -59,14 +59,14 @@ src/shared/에서 타입과 검증 스키마를 공유한다.
 ## 개발 규칙
 
 ### 반드시 지켜야 할 것
-- 새 기능 구현 전 TEST_CASES.md의 해당 테스트부터 작성
-- API 구현 시 API_SPEC.md의 명세를 정확히 따르기
+- 구현 전 반드시 관련 명세 문서 확인 (API_SPEC.md, COMPONENT_SPEC.md 등)
+- API 구현 시 API_SPEC.md의 요청/응답 형식 정확히 따르기
+- 에러 코드와 메시지는 명세에 정의된 것만 사용
 - 컴포넌트 구현 시 COMPONENT_SPEC.md의 Props와 동작 준수
 - 타입 변경 시 src/shared/types 먼저 수정
 
 ### 하지 말아야 할 것
 - 명세에 없는 기능 임의 추가 금지
-- 테스트 코드 삭제 또는 skip 금지
 - any 타입 사용 금지
 - console.log 커밋 금지 (디버깅 후 제거)
 - src/client/에서 직접 DB 접근 금지
@@ -79,7 +79,6 @@ src/shared/에서 타입과 검증 스키마를 공유한다.
 
 ### Git 커밋 규칙
 - 커밋 메시지에 Co-Authored-By 포함하지 않음
-
 
 ## SDD 워크플로우 규칙
 

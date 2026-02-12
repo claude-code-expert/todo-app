@@ -25,7 +25,7 @@
 | TC-COMP-005 | — | US-007 | TicketModal 컴포넌트 |
 | TC-COMP-006 | — | US-008 | ConfirmDialog 컴포넌트 |
 | TC-INT-001 | FR-005, FR-007 | US-005, US-006 | 드래그앤드롭 통합 |
-| TC-INT-002 | FR-002, FR-005, FR-006 | US-006, US-008 | 완료 → 삭제 흐름 |
+| TC-INT-002 | FR-002, FR-005, FR-006 | US-006, US-008 | completed_at+24시간 이후인 건 Done 영역에 노출안됨  |
 
 ---
 
