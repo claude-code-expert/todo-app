@@ -360,6 +360,7 @@ docs: API_SPEC.md 에러 코드 추가
 > 전체 히스토리는 [CHANGELOG.md](./CHANGELOG.md) 참조
 
 ### 2026-02-13
+- **[001-create-ticket-api]** Changelog skill 분리 (.claude/skills/ 생성, speckit은 commands 유지)
 - **[001-create-ticket-api]** Speckit 워크플로우 통합 및 에러 처리 시스템 구축 (specs/, src/shared/errors/, 서비스 레이어 개선)
 - **[chapter5.1-init]** Changelog 시스템 구현 완료 (/changelog 스킬, helper script, 문서 템플릿)
 - **[chapter5.1-init]** TC-API-001 테스트 완료 (11/11 passed, 100% coverage)

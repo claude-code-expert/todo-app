@@ -12,6 +12,27 @@
 
 ---
 
+## [001-create-ticket-api] - 2026-02-13 23:19
+
+### 🎯 Prompt
+> "Changelog skill을 .claude/skills/로 분리"
+
+### ✅ Changes
+- **Added**: `.claude/skills/` 디렉토리 생성
+- **Moved**: `changelog.md`를 `.claude/commands/`에서 `.claude/skills/`로 이동
+- **Kept**: `speckit.*` 파일들은 `.claude/commands/`에 유지
+
+### 📁 Files Modified
+- `.claude/skills/changelog.md` (moved from commands/)
+- `.claude/commands/speckit.*.md` (10개 파일, 위치 유지)
+
+### 🎓 Key Learnings
+- `.claude/skills/` - Custom skills (changelog 등)
+- `.claude/commands/` - Speckit commands (speckit.* 등)
+- 역할에 따른 명확한 디렉토리 분리
+
+---
+
 ## [001-create-ticket-api] - 2026-02-13 22:53
 
 ### 🎯 Prompt
