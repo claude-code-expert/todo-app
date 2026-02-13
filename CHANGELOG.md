@@ -12,6 +12,27 @@
 
 ---
 
+## [001-create-ticket-api] - 2026-02-13 23:44
+
+### 🎯 Prompt
+> "changelog 스킬 인식 문제 해결 - .claude/commands/로 재이동"
+
+### ✅ Changes
+- **Fixed**: Changelog 스킬 인식 문제 해결
+- **Moved**: `changelog.md`를 `.claude/skills/`에서 `.claude/commands/`로 재이동
+- **Removed**: `.claude/skills/` 디렉토리 삭제 (Claude Code가 인식하지 못함)
+
+### 📁 Files Modified
+- `.claude/commands/changelog.md` (moved back from skills/)
+- `.claude/skills/` (directory removed)
+
+### 🎓 Key Learnings
+- Claude Code는 `.claude/commands/` 디렉토리만 스킬로 인식
+- `.claude/skills/` 디렉토리는 아직 공식적으로 지원되지 않음
+- 모든 스킬/커맨드는 `.claude/commands/`에 위치해야 함
+
+---
+
 ## [001-create-ticket-api] - 2026-02-13 23:19
 
 ### 🎯 Prompt
