@@ -15,7 +15,8 @@ if (typeof global.TextEncoder === 'undefined') {
 }
 
 // 서버 사이드 모듈 mock
-jest.mock('@/server/services/ticketService');
+// Note: 통합 테스트에서는 실제 서비스를 사용하므로 여기서 mock하지 않음
+// 필요한 경우 개별 테스트 파일에서 jest.mock() 사용
 
 // console 출력 제어 (선택사항)
 global.console = {
