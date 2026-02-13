@@ -12,6 +12,73 @@
 
 ---
 
+## [001-create-ticket-api] - 2026-02-14 02:13
+
+### 🎯 Prompt
+> See commit message
+
+### ✅ Changes
+
+- **Added**: `.specify/hooks/pre-commit`
+- **Added**: `.specify/scripts/bash/install-hooks.sh`
+- **Modified**: `CLAUDE.md`
+
+### 📁 Files Modified
+
+- `.specify/hooks/pre-commit` (+96, -0 lines)
+- `.specify/scripts/bash/install-hooks.sh` (+47, -0 lines)
+- `CLAUDE.md` (+10, -1 lines)
+
+---
+
+
+## [001-create-ticket-api] - 2026-02-14 01:49
+
+### 🎯 Prompt
+> "Changelog 스킬 인식 문제 해결, Documentation First 원칙 수립, 재발 방지 시스템 구축, Context7 MCP 통합"
+
+### ✅ Changes
+- **Fixed**: Changelog 스킬을 올바른 구조로 이동 (`.claude/skills/changelog/SKILL.md`)
+- **Fixed**: Context7 MCP 인식 문제 해결 (`.env.local` vs 시스템 환경변수 차이)
+- **Added**: Documentation First 원칙 (constitution.md Core Principle VII)
+- **Added**: Incident Report (`docs/incidents/2026-02-13-changelog-skill-structure.md`)
+- **Added**: 재발 방지 가이드라인 (`docs/guidelines/implementation-checklist.md`)
+- **Added**: 가드레일 시스템 (`docs/guidelines/guardrails.md`)
+- **Added**: Context7 MCP 설정 (`docs/setup/context7-setup.md`, `.mcp.json`)
+- **Updated**: CLAUDE.md - `.claude/` 디렉토리 구조, MCP Servers 섹션, 금지사항 강화
+
+### 📁 Files Modified (9 files, +1,818 / -2 lines)
+- `.claude/skills/changelog/SKILL.md` (renamed from commands/, +3 -1)
+- `.gitignore` (+1, .mcp.json 추가)
+- `.specify/memory/constitution.md` (+10, Documentation First 원칙)
+- `CHANGELOG.md` (+96, 정정 엔트리 및 참조 링크)
+- `CLAUDE.md` (+65, .claude/ 구조 + MCP + 금지사항)
+- `docs/guidelines/guardrails.md` (+537, 5단계 가드레일)
+- `docs/guidelines/implementation-checklist.md` (+336, 6단계 체크리스트)
+- `docs/incidents/2026-02-13-changelog-skill-structure.md` (+416, Incident Report)
+- `docs/setup/context7-setup.md` (+356, Context7 설정 가이드)
+
+### 🎓 Key Learnings
+- **Skills 구조**: `.claude/skills/<name>/SKILL.md` (디렉토리 + SKILL.md) — 공식 문서 확인 필수
+- **Commands vs Skills**: Commands는 레거시, Skills가 권장 (출처: https://code.claude.com/docs/skills.md)
+- **MCP 환경변수**: `.env.local`은 Next.js 전용, MCP는 시스템 환경변수 또는 직접 입력 필요
+- **Documentation First**: 추측 금지, 공식 문서 우선 원칙 수립
+
+### 📚 References
+- [Incident Report](docs/incidents/2026-02-13-changelog-skill-structure.md)
+- Claude Code Skills: https://code.claude.com/docs/skills.md
+- Context7 MCP: https://context7.com/docs/clients/claude-code
+
+### 🔗 Commits (6)
+- `14f9651` fix: Changelog 스킬 인식 문제 해결
+- `4ab6ced` fix: Changelog를 올바른 skills 구조로 수정 + Documentation First 원칙 추가
+- `6558655` docs: Changelog 스킬 구조 오해 Incident Report 추가
+- `1a05404` docs: 재발 방지 가이드라인 및 가드레일 시스템 추가
+- `75d3cbe` feat: Context7 MCP 추가 - Documentation First 원칙 자동화
+- `c636638` chore: .mcp.json을 .gitignore에 추가 (API 키 보호)
+
+---
+
 ## [001-create-ticket-api] - 2026-02-14 01:18
 
 ### 🎯 Prompt

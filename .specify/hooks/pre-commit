@@ -1,0 +1,96 @@
+#!/bin/bash
+# Pre-commit hook: CHANGELOG.md 자동 업데이트
+# 설치: bash .specify/scripts/bash/install-hooks.sh
+
+set -e
+
+CHANGELOG="CHANGELOG.md"
+
+# 1. CHANGELOG.md가 이미 staged에 있으면 스킵 (/changelog 스킬로 수동 실행한 경우)
+if git diff --cached --name-only | grep -q "^${CHANGELOG}$"; then
+    exit 0
+fi
+
+# 2. staged 파일이 없으면 스킵
+STAGED_FILES=$(git diff --cached --name-only)
+if [ -z "$STAGED_FILES" ]; then
+    exit 0
+fi
+
+# 3. 브랜치명, 날짜/시간
+BRANCH=$(git branch --show-current 2>/dev/null || echo "detached")
+DATETIME=$(date '+%Y-%m-%d %H:%M')
+
+# 4. staged 파일 변경 내역 수집
+CHANGES=""
+while IFS=$'\t' read -r status file; do
+    case "$status" in
+        A) CHANGES="${CHANGES}\n- **Added**: \`${file}\`" ;;
+        M) CHANGES="${CHANGES}\n- **Modified**: \`${file}\`" ;;
+        D) CHANGES="${CHANGES}\n- **Deleted**: \`${file}\`" ;;
+        R*) CHANGES="${CHANGES}\n- **Renamed**: \`${file}\`" ;;
+        *)  CHANGES="${CHANGES}\n- **Changed**: \`${file}\`" ;;
+    esac
+done < <(git diff --cached --name-status)
+
+# 5. 파일별 라인 수 수집
+FILES_STAT=""
+while IFS= read -r line; do
+    # "  10  5  src/file.ts" 형식 파싱
+    insertions=$(echo "$line" | awk '{print $1}')
+    deletions=$(echo "$line" | awk '{print $2}')
+    filepath=$(echo "$line" | awk '{print $3}')
+    if [ -n "$filepath" ]; then
+        FILES_STAT="${FILES_STAT}\n- \`${filepath}\` (+${insertions}, -${deletions} lines)"
+    fi
+done < <(git diff --cached --numstat)
+
+# 6. CHANGELOG.md가 없으면 생성
+if [ ! -f "$CHANGELOG" ]; then
+    cat > "$CHANGELOG" << 'HEADER'
+# Tika Development Changelog
+
+> 이 문서는 Tika 프로젝트의 개발 히스토리를 기록합니다.
+> 각 엔트리는 프롬프트, 변경사항, 영향받은 파일을 포함합니다.
+
+---
+
+HEADER
+fi
+
+# 7. 엔트리를 임시 파일에 생성
+ENTRY_FILE=$(mktemp)
+{
+    echo "## [${BRANCH}] - ${DATETIME}"
+    echo ""
+    echo "### 🎯 Prompt"
+    echo "> See commit message"
+    echo ""
+    echo "### ✅ Changes"
+    echo -e "$CHANGES"
+    echo ""
+    echo "### 📁 Files Modified"
+    echo -e "$FILES_STAT"
+    echo ""
+    echo "---"
+} > "$ENTRY_FILE"
+
+# 8. CHANGELOG.md 최상단(--- 구분선 다음)에 엔트리 삽입
+TEMP_FILE=$(mktemp)
+INSERTED=false
+while IFS= read -r line; do
+    echo "$line" >> "$TEMP_FILE"
+    if [ "$line" = "---" ] && [ "$INSERTED" = false ]; then
+        echo "" >> "$TEMP_FILE"
+        cat "$ENTRY_FILE" >> "$TEMP_FILE"
+        echo "" >> "$TEMP_FILE"
+        INSERTED=true
+    fi
+done < "$CHANGELOG"
+mv "$TEMP_FILE" "$CHANGELOG"
+rm -f "$ENTRY_FILE"
+
+# 9. CHANGELOG.md를 staging에 추가
+git add "$CHANGELOG"
+
+echo "📝 CHANGELOG.md 자동 업데이트 완료 [${BRANCH}] ${DATETIME}"

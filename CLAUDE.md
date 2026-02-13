@@ -332,6 +332,14 @@ npm run db:studio    # Drizzle Studio 실행
 npm run db:seed      # 시드 데이터 생성
 ```
 
+### Git Hooks
+```bash
+bash .specify/scripts/bash/install-hooks.sh  # hook 설치
+rm .git/hooks/pre-commit                     # hook 제거
+```
+- **pre-commit**: 커밋 시 CHANGELOG.md 자동 업데이트
+- `/changelog` 수동 실행 시에는 hook이 자동 스킵됨 (중복 방지)
+
 ## 검증 체크리스트
 
 ### 커밋 전
@@ -420,7 +428,8 @@ docs: API_SPEC.md 에러 코드 추가
 > 전체 히스토리는 [CHANGELOG.md](./CHANGELOG.md) 참조
 
 ### 2026-02-14
-- **[001-create-ticket-api]** ✅ Changelog를 올바른 skills 구조로 수정 (.claude/skills/changelog/SKILL.md) + Documentation First 원칙 추가
+- **[001-create-ticket-api]** ✅ Changelog 스킬 + Documentation First + Context7 MCP 통합 (9 files, +1,818 lines)
+- **[001-create-ticket-api]** 재발 방지 시스템: Incident Report, 가이드라인, 가드레일 추가
 
 ### 2026-02-13
 - **[001-create-ticket-api]** ⚠️ Changelog 스킬 구조 시행착오 (잘못된 구조 사용, 공식 문서 미확인)
