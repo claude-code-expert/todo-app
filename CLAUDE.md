@@ -46,6 +46,48 @@ tika/
 - **Testing**: Jest + React Testing Library
 - **Deployment**: Vercel
 
+## MCP Servers (Model Context Protocol)
+
+### Context7 - 공식 문서 자동 참조 🎯
+
+**목적**: 추측 금지, 공식 문서 우선 원칙을 자동화
+
+**기능**:
+- 최신 라이브러리 문서를 실시간으로 fetch (Drizzle 0.38.x, React 19, Next.js 15 등)
+- 할루시네이션 방지 (훈련 데이터가 아닌 공식 소스에서 직접)
+- 버전별 정확한 API 참조
+- 코드 예제, 스키마 정보, 마이그레이션 가이드 제공
+
+**설정**:
+```bash
+# 1. API 키 발급: https://context7.com
+# 2. .env.local에 추가
+CONTEXT7_API_KEY=your-api-key-here
+
+# 3. .mcp.json 확인 (이미 설정됨)
+```
+
+**사용법**:
+```bash
+# 명시적 사용
+> use context7 to show me Drizzle ORM 0.38.x migration syntax
+
+# 특정 라이브러리
+> use context7 with @vercel/next to explain App Router caching
+
+# 일반 질문 (자동 참조)
+> How to validate with Zod in TypeScript strict mode?
+```
+
+**Documentation First 원칙 적용**:
+- ✅ 구현 전: "use context7"로 최신 공식 문서 확인
+- ✅ 불확실 시: Context7이 자동으로 올바른 방법 제시
+- ✅ 검증: 공식 소스에서 가져온 정보이므로 신뢰 가능
+
+**비용**: 무료 1,000 요청/월 (로컬 서버 사용 시 무제한)
+
+**공식 문서**: https://context7.com/docs/clients/claude-code
+
 ## 환경 설정
 
 ### 환경 변수
