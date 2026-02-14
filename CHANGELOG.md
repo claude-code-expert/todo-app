@@ -12,6 +12,26 @@
 
 ---
 
+## [001-create-ticket-api] - 2026-02-14 13:15
+
+### 🎯 Prompt
+> "DB 스키마 구현 및 마이그레이션 실행, .env.local git 추적 해제, Context7 MCP 설정 문서 업데이트, Jest verbose 설정"
+
+### ✅ Changes
+- **Modified**: `drizzle.config.ts` - dotenv 추가로 `.env.local`에서 DATABASE_URL 로드
+- **Modified**: `package.json` - `test` 스크립트에 `--verbose` 추가
+- **Modified**: `docs/setup/context7-setup.md` - 로컬/호스팅 두 가지 설정 방법, `.env.local` 참조 불가 경고 추가
+- **Removed**: `.env.local` git 추적 해제 (`git rm --cached`)
+- **Applied**: `npm run db:migrate` - tickets 테이블 생성 완료 (12 columns, 3 indexes)
+
+### 📁 Files Modified
+- `drizzle.config.ts` (+3, -0 lines)
+- `package.json` (+1, -1 lines)
+- `docs/setup/context7-setup.md` (+47, -27 lines)
+- `.env.local` (git 추적 해제)
+
+---
+
 ## [001-create-ticket-api] - 2026-02-14 12:30
 
 ### 🎯 Prompt

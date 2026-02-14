@@ -428,6 +428,7 @@ docs: API_SPEC.md 에러 코드 추가
 > 전체 히스토리는 [CHANGELOG.md](./CHANGELOG.md) 참조
 
 ### 2026-02-14
+- **[001-create-ticket-api]** DB 마이그레이션 실행 (tickets 테이블 생성), drizzle.config dotenv 연동, Jest verbose, .env.local 추적 해제
 - **[001-create-ticket-api]** ✅ Changelog 스킬 + Documentation First + Context7 MCP 통합 (9 files, +1,818 lines)
 - **[001-create-ticket-api]** 재발 방지 시스템: Incident Report, 가이드라인, 가드레일 추가
 
