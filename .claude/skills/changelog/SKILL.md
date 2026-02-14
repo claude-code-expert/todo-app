@@ -56,11 +56,13 @@ git diff --cached --stat
 git diff --stat
 ```
 
-### 3. Extract Recent Conversation
+### 3. Extract Session Prompts
 
-최근 3-5개 사용자 프롬프트를 대화에서 추출:
-- 주요 작업 내용 식별
-- 수행한 액션 요약
+현재 세션의 사용자 프롬프트를 대화 컨텍스트에서 추출:
+- 모든 사용자 프롬프트 원문을 시간순으로 수집
+- 슬래시 커맨드(/changelog 자체 등)는 제외
+- 짧은 확인 응답("ㅇㅇ", "ㄱㄱ", "yes" 등)은 제외
+- IDE 선택 컨텍스트(@파일명)는 프롬프트에 포함하여 기록
 
 ### 4. Generate CHANGELOG Entry
 
@@ -69,8 +71,10 @@ git diff --stat
 ```markdown
 ## [브랜치명] - YYYY-MM-DD HH:MM
 
-### 🎯 Prompt
-> "사용자 요약 또는 추출된 프롬프트"
+### 🎯 Prompts
+1. "첫 번째 사용자 프롬프트 원문"
+2. "두 번째 사용자 프롬프트 원문"
+3. "세 번째 사용자 프롬프트 원문"
 
 ### ✅ Changes
 - **Added**: 새로운 기능/파일 (`파일경로`)
@@ -173,8 +177,8 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 # 생성된 엔트리
 ## [001-create-ticket-api] - 2026-02-13 14:30
 
-### 🎯 Prompt
-> "빈 제목 검증 테스트 추가"
+### 🎯 Prompts
+1. "TC-API-001에 빈 제목 검증 테스트 추가해줘"
 
 ### ✅ Changes
 - **Added**: Empty title validation test (`__tests__/api/tickets.test.ts:95`)
@@ -194,8 +198,9 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 # 생성된 엔트리
 ## [chapter5.1-init] - 2026-02-13 10:15
 
-### 🎯 Prompt
-> ".env 파일들을 3개 브랜치(chapter4.4.5, chapter5.1-SDD, chapter5.1-init)에 푸시"
+### 🎯 Prompts
+1. ".env 파일들을 3개 브랜치(chapter4.4.5, chapter5.1-SDD, chapter5.1-init)에 푸시해줘"
+2. "jest.setup.ts에서 ticketService mock 제거해"
 
 ### ✅ Changes
 - **Modified**: `.env.local` - DB 인증 정보 추가
@@ -226,8 +231,9 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 # 생성된 엔트리
 ## [001-create-ticket-api] - 2026-02-13 16:45
 
-### 🎯 Prompt
-> "TC-API-001의 누락된 5개 테스트를 추가해줘"
+### 🎯 Prompts
+1. "TC-API-001의 누락된 5개 테스트를 추가해줘"
+2. "npm test 실행해서 결과 보여줘"
 
 ### ✅ Changes
 - **Added**: 빈 제목 검증 테스트 (`__tests__/api/tickets.test.ts:95`)
