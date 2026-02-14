@@ -12,6 +12,54 @@
 
 ---
 
+## [001-create-ticket-api] - 2026-02-14 17:23
+
+### 🎯 Prompt
+> See commit message
+
+### ✅ Changes
+
+- **Added**: `__tests__/api/tickets-detail.test.ts`
+- **Added**: `__tests__/api/tickets-reorder.test.ts`
+- **Added**: `__tests__/services/ticketService.board.test.ts`
+- **Added**: `__tests__/services/ticketService.complete.test.ts`
+- **Added**: `__tests__/services/ticketService.delete.test.ts`
+- **Added**: `__tests__/services/ticketService.getById.test.ts`
+- **Added**: `__tests__/services/ticketService.overdue.test.ts`
+- **Added**: `__tests__/services/ticketService.reorder.test.ts`
+- **Added**: `__tests__/services/ticketService.update.test.ts`
+- **Added**: `app/api/tickets/[id]/complete/route.ts`
+- **Added**: `app/api/tickets/[id]/route.ts`
+- **Added**: `app/api/tickets/reorder/route.ts`
+- **Modified**: `app/api/tickets/route.ts`
+- **Added**: `src/server/db/seed.ts`
+- **Modified**: `src/server/services/ticketService.ts`
+- **Modified**: `src/shared/types/index.ts`
+- **Modified**: `src/shared/validations/ticket.ts`
+
+### 📁 Files Modified
+
+- `__tests__/api/tickets-detail.test.ts` (+81, -0 lines)
+- `__tests__/api/tickets-reorder.test.ts` (+62, -0 lines)
+- `__tests__/services/ticketService.board.test.ts` (+120, -0 lines)
+- `__tests__/services/ticketService.complete.test.ts` (+62, -0 lines)
+- `__tests__/services/ticketService.delete.test.ts` (+30, -0 lines)
+- `__tests__/services/ticketService.getById.test.ts` (+55, -0 lines)
+- `__tests__/services/ticketService.overdue.test.ts` (+115, -0 lines)
+- `__tests__/services/ticketService.reorder.test.ts` (+163, -0 lines)
+- `__tests__/services/ticketService.update.test.ts` (+98, -0 lines)
+- `app/api/tickets/[id]/complete/route.ts` (+38, -0 lines)
+- `app/api/tickets/[id]/route.ts` (+120, -0 lines)
+- `app/api/tickets/reorder/route.ts` (+39, -0 lines)
+- `app/api/tickets/route.ts` (+18, -0 lines)
+- `src/server/db/seed.ts` (+22, -0 lines)
+- `src/server/services/ticketService.ts` (+224, -1 lines)
+- `src/shared/types/index.ts` (+23, -0 lines)
+- `src/shared/validations/ticket.ts` (+46, -1 lines)
+
+---
+
+
 ## [001-create-ticket-api] - 2026-02-14 13:15
 
 ### 🎯 Prompt

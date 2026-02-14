@@ -37,3 +37,26 @@ export interface CreateTicketInput {
   plannedStartDate?: string;
   dueDate?: string;
 }
+
+export interface TicketWithMeta extends Ticket {
+  isOverdue: boolean;
+}
+
+export interface UpdateTicketInput {
+  title?: string;
+  description?: string | null;
+  priority?: TicketPriority;
+  plannedStartDate?: string | null;
+  dueDate?: string | null;
+}
+
+export interface ReorderTicketInput {
+  ticketId: number;
+  status: Exclude<TicketStatus, 'DONE'>;
+  position: number;
+}
+
+export interface BoardData {
+  board: Record<TicketStatus, TicketWithMeta[]>;
+  total: number;
+}

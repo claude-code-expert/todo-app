@@ -2,6 +2,24 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createTicketSchema } from '@/shared/validations/ticket';
 import { ticketService } from '@/server/services';
 
+export async function GET() {
+  try {
+    const boardData = await ticketService.getBoard();
+    return NextResponse.json(boardData);
+  } catch (error) {
+    console.error('Unexpected error in GET /api/tickets:', error);
+    return NextResponse.json(
+      {
+        error: {
+          code: 'INTERNAL_ERROR',
+          message: '서버 내부 오류가 발생했습니다',
+        },
+      },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     // 1. Parse request body
