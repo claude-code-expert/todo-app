@@ -50,6 +50,32 @@
 
 ---
 
+## 구현 현황
+
+### 백엔드 (7/7 API 완료)
+| 엔드포인트 | 테스트 | 상태 |
+|-----------|--------|------|
+| POST /api/tickets | 11 passed | ✅ |
+| GET /api/tickets | 8 passed | ✅ |
+| GET /api/tickets/:id | 3 passed | ✅ |
+| PATCH /api/tickets/:id | 8 passed | ✅ |
+| PATCH /api/tickets/:id/complete | 5 passed | ✅ |
+| DELETE /api/tickets/:id | 2 passed | ✅ |
+| PATCH /api/tickets/reorder | 10 passed | ✅ |
+
+### 프런트엔드 (16/16 컴포넌트 완료)
+| Phase | 컴포넌트 | 테스트 | 상태 |
+|-------|---------|--------|------|
+| 1 | Button, Badge, Modal, ConfirmDialog | 22 passed | ✅ |
+| 2 | TicketCard, ColumnHeader, Column, Board | 25 passed | ✅ |
+| 3 | TicketDetailView, TicketForm, TicketModal | 17 passed | ✅ |
+| 4 | ticketApi, useTickets | 21 passed | ✅ |
+| 5 | BoardHeader, FilterBar, BoardContainer, page.tsx | 16 passed | ✅ |
+
+**전체: 26 test suites, 169 tests passed**
+
+---
+
 ## 프로젝트 구조
 
 ```
@@ -65,31 +91,41 @@ tika/
 │   │       └── reorder/
 │   │           └── route.ts          # PATCH /api/tickets/reorder
 │   │
-│   ├── (board)/                      # 프런트엔드: 페이지 그룹
-│   │   ├── page.tsx                  # 메인 칸반 보드 페이지
-│   │   └── layout.tsx                # 보드 레이아웃
+│   ├── page.tsx                      # 메인 페이지 (서버 컴포넌트)
 │   ├── layout.tsx                    # 루트 레이아웃
-│   └── globals.css                   # 글로벌 스타일 + Tailwind
+│   └── globals.css                   # 디자인 시스템 + CSS 변수
 │
 ├── src/
 │   ├── server/                       # 백엔드 로직 (서버에서만 실행)
 │   │   ├── services/
-│   │   │   └── ticketService.ts      # 비즈니스 로직
-│   │   ├── db/
-│   │   │   ├── index.ts              # Drizzle 클라이언트 초기화
-│   │   │   ├── schema.ts             # DB 스키마 정의
-│   │   │   └── seed.ts               # 시드 데이터
-│   │   └── middleware/
-│   │       ├── errorHandler.ts       # 에러 처리
-│   │       └── validate.ts           # Zod 검증 유틸리티
+│   │   │   ├── ticketService.ts      # 비즈니스 로직
+│   │   │   └── index.ts              # 서비스 export
+│   │   └── db/
+│   │       ├── index.ts              # Drizzle 클라이언트 초기화
+│   │       ├── schema.ts             # DB 스키마 정의
+│   │       └── seed.ts               # 시드 데이터
 │   │
 │   ├── client/                       # 프런트엔드 로직 (브라우저에서 실행)
 │   │   ├── components/
-│   │   │   ├── board/                # Board, Column, TicketCard
-│   │   │   ├── ticket/               # TicketModal, TicketForm
-│   │   │   └── ui/                   # Button, Modal, Badge, ConfirmDialog
+│   │   │   ├── board/                # BoardContainer, Board, Column, ColumnHeader
+│   │   │   │   ├── BoardContainer.tsx  # 메인 컨테이너 (필터, 모달, CRUD)
+│   │   │   │   ├── BoardHeader.tsx     # 상단 헤더 (타이틀, 새 업무 버튼)
+│   │   │   │   ├── FilterBar.tsx       # 필터 바 (이번주 업무, 일정 초과)
+│   │   │   │   ├── Board.tsx           # 4칼럼 보드 레이아웃
+│   │   │   │   ├── Column.tsx          # 단일 칼럼 (DnD 드롭 영역)
+│   │   │   │   └── ColumnHeader.tsx    # 칼럼 헤더 (이름 + 카드 수)
+│   │   │   ├── ticket/               # TicketCard, TicketModal, TicketForm
+│   │   │   │   ├── TicketCard.tsx      # 개별 카드 (DnD 드래그 소스)
+│   │   │   │   ├── TicketModal.tsx     # 상세/수정 모달
+│   │   │   │   ├── TicketForm.tsx      # 생성/수정 폼
+│   │   │   │   └── TicketDetailView.tsx # 읽기 전용 필드
+│   │   │   └── ui/                   # 공통 UI 컴포넌트
+│   │   │       ├── Button.tsx          # variant, size, isLoading
+│   │   │       ├── Modal.tsx           # ESC 닫기, 바깥 클릭, 스크롤 잠금
+│   │   │       ├── Badge.tsx           # PriorityBadge, DueDateBadge
+│   │   │       └── ConfirmDialog.tsx   # 삭제 확인 다이얼로그
 │   │   ├── hooks/
-│   │   │   └── useTickets.ts         # 티켓 CRUD + DnD 상태 관리
+│   │   │   └── useTickets.ts         # 티켓 CRUD + 보드 상태 관리
 │   │   └── api/
 │   │       └── ticketApi.ts          # API 호출 함수 (fetch 래퍼)
 │   │
@@ -98,21 +134,20 @@ tika/
 │       │   └── index.ts              # Ticket, BoardData, API 타입
 │       ├── validations/
 │       │   └── ticket.ts             # Zod 스키마 (폼 + API 검증)
-│       └── constants.ts              # 칼럼명, 우선순위 등 상수
+│       └── errors/
+│           └── index.ts              # TicketNotFoundError 등
 │
-├── __tests__/                        # 테스트 코드
-│   ├── api/                          # API Route 테스트
-│   ├── services/                     # 서비스 단위 테스트
-│   ├── components/                   # 컴포넌트 테스트
+├── __tests__/                        # 테스트 코드 (169 tests)
+│   ├── api/                          # API Route + ticketApi 테스트
+│   ├── services/                     # 서비스 통합 테스트 (@jest-environment node)
+│   ├── components/                   # 컴포넌트 테스트 (jsdom)
 │   └── hooks/                        # Hook 테스트
 │
 ├── docs/                             # 프로젝트 명세 문서
 ├── drizzle/                          # Drizzle 마이그레이션
 ├── CLAUDE.md                         # Claude Code 프로젝트 설정
-├── drizzle.config.ts
-├── next.config.ts
-├── jest.config.ts
-├── tsconfig.json
+├── CHANGELOG.md                      # 개발 히스토리
+├── jest.config.ts                    # Jest 설정 (jsdom + runInBand)
 └── package.json
 ```
 
@@ -123,6 +158,7 @@ tika/
 | `src/server/` → `src/client/` import 금지 | 백엔드에서 프런트엔드 코드 참조 불가 |
 | `src/client/` → `src/server/` import 금지 | 프런트엔드에서 백엔드 코드 직접 참조 불가 |
 | `src/shared/`만 양쪽에서 참조 가능 | 타입, Zod 스키마, 상수만 공유 |
+| `app/page.tsx`만 `src/server/` 직접 참조 | 서버 컴포넌트에서 initialData 전달 |
 
 ---
 
@@ -156,16 +192,16 @@ npm install
 cp .env.example .env.local
 ```
 
-`.env.local` 파일에 `POSTGRES_URL` 값을 설정한다.
+`.env.local` 파일에 `DATABASE_URL` 값을 설정한다.
+
+**로컬 PostgreSQL 사용 시:**
+```
+DATABASE_URL=postgresql://username:password@localhost:5432/tika
+```
 
 **Vercel Postgres 사용 시:**
 ```bash
 vercel env pull .env.local
-```
-
-**로컬 PostgreSQL 사용 시:**
-```
-POSTGRES_URL=postgresql://username:password@localhost:5432/tika
 ```
 
 ### 3. DB 마이그레이션
@@ -197,14 +233,15 @@ npm run dev
 |--------|------|
 | `npm run dev` | 개발 서버 실행 |
 | `npm run build` | 프로덕션 빌드 |
-| `npm run test` | 테스트 실행 |
+| `npm run test` | 전체 테스트 실행 (169 tests, --runInBand) |
+| `npm run test:components` | 컴포넌트 테스트만 (80 tests) |
 | `npm run test:watch` | 테스트 감시 모드 |
+| `npx tsc --noEmit` | 타입 체크 |
 | `npm run db:generate` | DB 마이그레이션 생성 |
 | `npm run db:migrate` | DB 마이그레이션 적용 |
 | `npm run db:studio` | Drizzle Studio (DB GUI) |
 | `npm run db:seed` | 시드 데이터 삽입 |
 | `npm run lint` | ESLint 검사 |
-| `npm run format` | Prettier 포맷팅 |
 
 ---
 
@@ -219,12 +256,41 @@ npm run dev
 | [DATA_MODEL.md](docs/DATA_MODEL.md) | DB 스키마, Drizzle 정의, 비즈니스 규칙 |
 | [COMPONENT_SPEC.md](docs/COMPONENT_SPEC.md) | 컴포넌트 계층, Props, 이벤트 흐름, Hook 명세 |
 | [TEST_CASES.md](docs/TEST_CASES.md) | TDD용 테스트 케이스 (API + 컴포넌트 + 통합) |
+| [FRONTEND_TASKS.md](docs/FRONTEND_TASKS.md) | 프런트엔드 구현 순서 + TDD 체크리스트 |
+
+---
+
+## 테스트 구조
+
+```
+__tests__/
+├── api/                    # API 테스트
+│   ├── tickets.test.ts       # POST /api/tickets Route (@jest-environment node)
+│   ├── tickets-detail.test.ts  # GET/PATCH/DELETE Route (@jest-environment node)
+│   ├── tickets-reorder.test.ts # PATCH /api/tickets/reorder (@jest-environment node)
+│   └── ticketApi.test.ts     # fetch 래퍼 테스트 (jsdom)
+├── services/               # 서비스 통합 테스트 (@jest-environment node)
+│   ├── ticketService.test.ts   # 생성 (TC-API-001)
+│   ├── ticketService.board.test.ts  # 보드 조회 (TC-API-002)
+│   └── ...                 # getById, update, complete, delete, reorder, overdue
+├── components/             # 컴포넌트 테스트 (jsdom)
+│   ├── Button.test.tsx       # Phase 1
+│   ├── TicketCard.test.tsx   # Phase 2
+│   ├── TicketForm.test.tsx   # Phase 3
+│   ├── BoardContainer.test.tsx # Phase 5
+│   └── ...
+└── hooks/
+    └── useTickets.test.ts    # Phase 4
+```
+
+- **서비스/API Route 테스트**: 실제 DB 연결 필요 → `@jest-environment node` + `--runInBand`
+- **컴포넌트/Hook 테스트**: mock 기반 → `jsdom` 환경 (기본값)
 
 ---
 
 ## 개발 방식
 
-이 프로젝트는 Claude Code와 함께 TDD 방식으로 개발하도록 설계되었다.
+이 프로젝트는 Claude Code와 함께 **SDD(Specification-Driven Development) + TDD** 방식으로 개발되었다.
 
 ```bash
 # Claude Code 실행
@@ -235,8 +301,9 @@ claude
 ```
 
 개발 순서:
-1. **백엔드 (Chapter 5)**: TEST_CASES.md의 TC-API 기반으로 TDD 사이클 진행
-2. **프런트엔드 (Chapter 6)**: TC-COMP, TC-INT 기반으로 컴포넌트 구현
+1. **명세 작성**: PRD → TRD → REQUIREMENTS → API_SPEC → DATA_MODEL → COMPONENT_SPEC → TEST_CASES
+2. **백엔드 TDD**: TEST_CASES.md의 TC-API 기반으로 Red → Green → Refactor
+3. **프런트엔드 TDD**: FRONTEND_TASKS.md 순서대로 Bottom-up 구현 (UI → Board → Ticket → Data → Container)
 
 ---
 

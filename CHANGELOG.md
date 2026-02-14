@@ -12,6 +12,113 @@
 
 ---
 
+## [chapter6-frontend] - 2026-02-14 (Phase 4-5 + 테스트 인프라 수정)
+
+### 🎯 Prompts
+1. "같은 방식으로 Phase 4 완료 후 → BoardHeader, FilterBar, BoardContainer, page.tsx (전체 조립)"
+2. "이후 컴포넌트 작업이 남은게 있는지 검증해"
+3. "타입에러 잡아"
+4. "컴포넌트 계층 구조를 현재 구현한 버전으로 업데이트 해줘"
+5. "npm test 시 에러가 나는데? — 서비스 테스트 실패 해결"
+6. "현재 수정 사항과 테스트 실패케이스 픽스한거 문서에 업데이트 해주고 README.md도 현재 버전으로 업데이트 해"
+
+### ✅ Changes
+
+**Phase 4: 데이터 레이어 TDD**
+- **Added**: `src/client/api/ticketApi.ts` — fetch 래퍼 (6개 API 함수 + handleResponse 에러 처리)
+- **Added**: `src/client/hooks/useTickets.ts` — React Hook (board/isLoading/error 상태 + CRUD 액션)
+- **Added**: `__tests__/api/ticketApi.test.ts` — 11 tests
+- **Added**: `__tests__/hooks/useTickets.test.ts` — 10 tests
+
+**Phase 5: 컨테이너 조립 TDD**
+- **Added**: `src/client/components/board/BoardHeader.tsx` — 타이틀 + 새 업무 버튼
+- **Added**: `src/client/components/board/FilterBar.tsx` — 이번주 업무/일정 초과 필터 토글
+- **Added**: `src/client/components/board/BoardContainer.tsx` — 전체 보드 컨테이너 (필터, 모달, CRUD)
+- **Modified**: `app/page.tsx` — async 서버 컴포넌트로 전환 (ticketService.getBoard → BoardContainer)
+- **Added**: `__tests__/components/BoardHeader.test.tsx` — 4 tests
+- **Added**: `__tests__/components/FilterBar.test.tsx` — 6 tests
+- **Added**: `__tests__/components/BoardContainer.test.tsx` — 6 tests
+
+**테스트 인프라 수정**
+- **Fixed**: 서비스 테스트 8개 파일에 `@jest-environment node` 추가 (jsdom → node)
+- **Fixed**: `package.json` — `--runInBand` 추가 (공유 DB 병렬 실행 race condition 해결)
+- **Fixed**: `__tests__/components/TicketCard.test.tsx` — URGENT 타입 에러 제거
+
+**문서 업데이트**
+- **Modified**: `docs/COMPONENT_SPEC.md` §1 — 컴포넌트 계층 구조를 실제 구현 반영
+- **Modified**: `docs/FRONTEND_TASKS.md` — Phase 4-5 완료 상태 업데이트
+- **Modified**: `CLAUDE.md` — 테스트 환경 설정 가이드, Recent Changes 업데이트
+- **Modified**: `README.md` — 현재 구현 현황 반영
+
+### 📊 Test Results
+- Total: **26 suites, 169/169 passed (100%)**
+- 컴포넌트: 13 suites, 80 tests (Phase 1~5)
+- 데이터 레이어: 2 suites, 21 tests (ticketApi + useTickets)
+- 서비스/API: 11 suites, 68 tests
+- `npx tsc --noEmit` 통과
+- `npm run build` 성공
+
+### 📁 Files Modified
+- `src/client/api/ticketApi.ts` (+50 lines)
+- `src/client/hooks/useTickets.ts` (+65 lines)
+- `src/client/components/board/BoardHeader.tsx` (+20 lines)
+- `src/client/components/board/FilterBar.tsx` (+32 lines)
+- `src/client/components/board/BoardContainer.tsx` (+145 lines)
+- `app/page.tsx` (+9, -3 lines)
+- `__tests__/api/ticketApi.test.ts` (+120 lines)
+- `__tests__/hooks/useTickets.test.ts` (+130 lines)
+- `__tests__/components/BoardHeader.test.tsx` (+30 lines)
+- `__tests__/components/FilterBar.test.tsx` (+60 lines)
+- `__tests__/components/BoardContainer.test.tsx` (+158 lines)
+- `__tests__/components/TicketCard.test.tsx` (-1 line)
+- `__tests__/services/*.test.ts` (8 files, +2 lines each)
+- `package.json` (+1, -1 lines)
+- `docs/COMPONENT_SPEC.md` (+40, -28 lines)
+- `docs/FRONTEND_TASKS.md` (+120, -60 lines)
+- `CLAUDE.md` (+20 lines)
+
+---
+
+## [chapter6-frontend] - 2026-02-14
+
+### 🎯 Prompts
+1. "프런트엔드 컴포넌트 테스트를 위한 Jest 설정을 업데이트해줘"
+2. "PRD.md와 COMPONENT_SPEC.md를 기반으로 프런트 개발에 필요한 컴포넌트와 파일들을 생성해줘"
+3. "TEST_CASES.md의 TC-COMP-001 테스트 케이스를 React Testing Library 테스트 코드로 변환해줘 (C001-1~C001-3)"
+4. "TicketCard 컴포넌트를 구현해줘 — 최소한의 구현으로 테스트만 통과하면 돼"
+5. "TicketCard 컴포넌트를 리팩토링해줘 — 스타일 클래스 분리, 접근성, 키보드 네비게이션"
+6. "추가 테스트 케이스 작성하고 구현해줘 (C001-4~C001-7) Red → Green → Refactor"
+7. "컴포넌트 계층 구조 화면 구성 가능한지 검토해봐"
+8. "구현 순서를 문서로 기록해서 순서대로 구현할 수 있도록 해"
+
+### ✅ Changes
+- **Added**: Jest 프런트엔드 테스트 인프라 (`jest.setup.ts`, `jest.config.ts`, `__mocks__/`)
+- **Added**: TicketCard 컴포넌트 TDD 구현 (`src/client/components/ticket/TicketCard.tsx`)
+- **Added**: Badge 컴포넌트 (PriorityBadge, DueDateBadge) (`src/client/components/ui/Badge.tsx`)
+- **Added**: TicketCard 테스트 10개 — C001-1~C001-7 (`__tests__/components/TicketCard.test.tsx`)
+- **Added**: 디자인 시스템 CSS — 토큰, 레이아웃, 컴포넌트 스타일 (`app/globals.css`)
+- **Added**: 프런트엔드 구현 태스크 문서 (`docs/FRONTEND_TASKS.md`)
+- **Modified**: COMPONENT_SPEC.md — FRONTEND_TASKS.md 참조 추가 (`docs/COMPONENT_SPEC.md`)
+
+### 📊 Test Results
+- TicketCard: 10/10 passed (100%) — TC-COMP-001 완료
+- 기존 API/Service 테스트: 68/68 passed (영향 없음)
+
+### 📁 Files Modified
+- `__tests__/components/TicketCard.test.tsx` (+181 lines)
+- `app/globals.css` (+603 lines)
+- `docs/FRONTEND_TASKS.md` (+316 lines)
+- `src/client/components/ticket/TicketCard.tsx` (+47 lines)
+- `src/client/components/ui/Badge.tsx` (+12 lines)
+- `jest.setup.ts` (+52, -6 lines)
+- `jest.config.ts` (+4 lines)
+- `__mocks__/styleMock.ts` (+1 line)
+- `__mocks__/fileMock.ts` (+1 line)
+- `docs/COMPONENT_SPEC.md` (+5, -1 lines)
+- `package.json` (+5, -2 lines)
+
+---
+
 ## [001-create-ticket-api] - 2026-02-14 19:37
 
 ### 🎯 Prompt

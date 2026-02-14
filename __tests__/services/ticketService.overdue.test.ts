@@ -1,4 +1,6 @@
 /**
+ * @jest-environment node
+ *
  * TC-API-008: isOverdue 필드 계산
  * 서비스 레이어 통합 테스트
  */

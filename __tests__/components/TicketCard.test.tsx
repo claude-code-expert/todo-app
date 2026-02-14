@@ -169,7 +169,6 @@ describe('TC-COMP-001: TicketCard', () => {
     ['LOW', 'Low'],
     ['MEDIUM', 'Medium'],
     ['HIGH', 'High'],
-    ['URGENT', 'Urgent'],
   ] as const)('C001-7: priority=%s일 때 뱃지에 data-priority="%s"가 적용된다', (priority, label) => {
     const ticket = createTicket({ priority });
 

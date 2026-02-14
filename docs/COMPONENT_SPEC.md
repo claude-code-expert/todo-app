@@ -8,33 +8,45 @@
 ## 1. 컴포넌트 계층 구조
 
 ```
-App (page.tsx - 서버 컴포넌트)
+App (page.tsx — 서버 컴포넌트, async)
+│   ticketService.getBoard() → initialData
 │
-└── BoardContainer (클라이언트 컴포넌트, 상태 관리 + DnD 컨텍스트)
+└── BoardContainer (클라이언트 컴포넌트, useTickets Hook)
     │
     ├── BoardHeader
-    │   ├── SearchInput (2차 구현 예정, MVP에서는 placeholder)
-    │   └── CreateTicketButton ─── TicketForm (생성 모달)
+    │   ├── <input> 검색 (disabled, MVP placeholder)
+    │   └── Button "새 업무" → setIsCreating(true)
     │
-    ├── FilterBar (이번주 업무 | 일정 초과 필터)
+    ├── FilterBar (이번주 업무 | 일정 초과, 토글 방식)
     │
-    ├── Board (DndContext + DragOverlay)
-    │   ├── Column (BACKLOG) ─── [좌측 사이드바]
-    │   │   ├── ColumnHeader (칼럼명 + 카드 수)
-    │   │   └── SortableContext
-    │   │       ├── TicketCard
-    │   │       └── ...
-    │   ├── Column (TODO) ─── [우측 메인 그리드]
-    │   │   └── ...
-    │   ├── Column (IN_PROGRESS)
-    │   │   └── ...
-    │   └── Column (DONE)
-    │       └── ...
+    ├── Board (board-content)
+    │   ├── board-sidebar
+    │   │   └── Column (BACKLOG)
+    │   │       ├── ColumnHeader (칼럼명 + 카드 수)
+    │   │       └── SortableContext + useDroppable
+    │   │           ├── TicketCard (useSortable)
+    │   │           │   ├── PriorityBadge
+    │   │           │   └── DueDateBadge
+    │   │           └── ...
+    │   └── board-main > columns-container
+    │       ├── Column (TODO)
+    │       ├── Column (IN_PROGRESS)
+    │       └── Column (DONE)
     │
-    └── TicketModal (상세/수정 모달)
-        ├── TicketDetailView (읽기 전용: 시작일, 종료일, 상태, 생성일)
-        ├── TicketForm (수정 모드)
-        └── DeleteButton ─── ConfirmDialog
+    ├── Modal (생성 모달, isCreating)
+    │   └── TicketForm (mode="create")
+    │       └── Button "생성" / "취소"
+    │
+    └── TicketModal (상세/수정 모달, selectedTicket)
+        ├── Modal
+        │   ├── modal-header: <h2> 제목 + Button "삭제" (danger)
+        │   ├── TicketDetailView (읽기 전용: 상태, 시작일, 종료일, 생성일)
+        │   └── TicketForm (mode="edit")
+        │       └── Button "저장" / "취소"
+        └── ConfirmDialog (삭제 확인)
+            ├── Modal
+            ├── Button "확인" (danger)
+            └── Button "취소" (secondary)
 ```
 
 ### 레이아웃 구성 (PRD 기준)

@@ -1,7 +1,12 @@
-export default function HomePage() {
+import { ticketService } from '@/server/services';
+import { BoardContainer } from '@/client/components/board/BoardContainer';
+
+export default async function HomePage() {
+  const initialData = await ticketService.getBoard();
+
   return (
     <main>
-      <h1>Tika</h1>
+      <BoardContainer initialData={initialData} />
     </main>
   );
 }

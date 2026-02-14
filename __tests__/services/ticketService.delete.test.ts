@@ -1,4 +1,6 @@
 /**
+ * @jest-environment node
+ *
  * TC-API-006: DELETE /api/tickets/:id — 티켓 삭제
  * 서비스 레이어 통합 테스트
  */

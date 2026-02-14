@@ -1,4 +1,6 @@
 /**
+ * @jest-environment node
+ *
  * TC-API-007: PATCH /api/tickets/reorder — 상태/순서 변경
  * 서비스 레이어 통합 테스트
  */

@@ -319,10 +319,16 @@ npm run lint         # ESLint 실행
 
 ### 테스트
 ```bash
-npm run test         # 테스트 실행
-npm run test:watch   # watch 모드
-npx tsc --noEmit     # 타입 체크
+npm run test              # 전체 테스트 실행 (--runInBand)
+npm run test:components   # 컴포넌트 테스트만
+npm run test:watch        # watch 모드
+npx tsc --noEmit          # 타입 체크
 ```
+
+#### 테스트 환경 설정
+- **컴포넌트 테스트** (`__tests__/components/`, `__tests__/hooks/`, `__tests__/api/ticketApi.test.ts`): `jsdom` 환경 (기본값)
+- **서비스/API 테스트** (`__tests__/services/`, `__tests__/api/tickets*.test.ts`): `node` 환경 — 파일 상단에 `/** @jest-environment node */` 필수
+- **`--runInBand`**: 서비스 테스트가 공유 DB(`tika_test`)를 사용하므로 병렬 실행 시 race condition 발생. 순차 실행 필수
 
 ### 데이터베이스
 ```bash
@@ -397,6 +403,19 @@ npm run test -- path/to/test.test.ts
 npm run test -- --verbose
 ```
 
+### 서비스 테스트 실패 (DB 관련)
+```bash
+# 원인 1: @jest-environment node 주석 누락
+# → 서비스 테스트 파일 상단에 /** @jest-environment node */ 추가
+
+# 원인 2: 병렬 실행으로 DB 데이터 충돌
+# → --runInBand 플래그 사용 (package.json에 설정됨)
+
+# 원인 3: DB 연결 실패
+pg_isready  # PostgreSQL 상태 확인
+psql $DATABASE_URL -c "SELECT 1"
+```
+
 ### DB 연결 오류
 ```bash
 # 환경 변수 확인
@@ -421,6 +440,19 @@ docs: API_SPEC.md 에러 코드 추가
 - `main`: 프로덕션
 - `feature/*`: 기능 개발
 - `fix/*`: 버그 수정
+
+## Recent Changes
+
+> 최근 7-14일간의 주요 변경사항을 추적합니다.
+> 전체 히스토리는 [CHANGELOG.md](./CHANGELOG.md) 참조
+
+### 2026-02-14
+- **[chapter6-frontend]** 프런트엔드 Phase 1~5 전체 TDD 구현 완료 (16개 컴포넌트, 102 tests)
+- **[chapter6-frontend]** Phase 4: ticketApi(11), useTickets(10) 데이터 레이어
+- **[chapter6-frontend]** Phase 5: BoardHeader(4), FilterBar(6), BoardContainer(6), page.tsx 컨테이너 조립
+- **[chapter6-frontend]** 서비스 테스트에 `@jest-environment node` 추가, `--runInBand` 설정으로 DB 충돌 해결
+- **[chapter6-frontend]** COMPONENT_SPEC.md §1 컴포넌트 계층 구조 실제 구현 반영
+- **[chapter6-frontend]** 전체 테스트: 26 suites, 169/169 passed
 
 ---
 

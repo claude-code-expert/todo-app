@@ -1,4 +1,6 @@
 /**
+ * @jest-environment node
+ *
  * TC-API-003: GET /api/tickets/:id — 티켓 상세 조회
  * 서비스 레이어 통합 테스트
  */

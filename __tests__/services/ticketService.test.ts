@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { ticketService } from '@/server/services/ticketService';
 import { db } from '@/server/db';
 import { tickets } from '@/server/db/schema';

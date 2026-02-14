@@ -1,4 +1,6 @@
 /**
+ * @jest-environment node
+ *
  * TC-API-005: PATCH /api/tickets/:id/complete — 티켓 완료
  * 서비스 레이어 통합 테스트
  */

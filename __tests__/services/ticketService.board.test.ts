@@ -1,4 +1,6 @@
 /**
+ * @jest-environment node
+ *
  * TC-API-002: GET /api/tickets — 보드 조회
  * 서비스 레이어 통합 테스트
  */
