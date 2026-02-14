@@ -15,30 +15,60 @@
 ## [001-create-ticket-api] - 2026-02-14 17:23
 
 ### 🎯 Prompt
-> See commit message
+> "6개 API 엔드포인트 구현 및 TC-API-002~008 테스트 68개 통과"
 
 ### ✅ Changes
 
-- **Added**: `__tests__/api/tickets-detail.test.ts`
-- **Added**: `__tests__/api/tickets-reorder.test.ts`
-- **Added**: `__tests__/services/ticketService.board.test.ts`
-- **Added**: `__tests__/services/ticketService.complete.test.ts`
-- **Added**: `__tests__/services/ticketService.delete.test.ts`
-- **Added**: `__tests__/services/ticketService.getById.test.ts`
-- **Added**: `__tests__/services/ticketService.overdue.test.ts`
-- **Added**: `__tests__/services/ticketService.reorder.test.ts`
-- **Added**: `__tests__/services/ticketService.update.test.ts`
-- **Added**: `app/api/tickets/[id]/complete/route.ts`
-- **Added**: `app/api/tickets/[id]/route.ts`
-- **Added**: `app/api/tickets/reorder/route.ts`
-- **Modified**: `app/api/tickets/route.ts`
-- **Added**: `src/server/db/seed.ts`
-- **Modified**: `src/server/services/ticketService.ts`
-- **Modified**: `src/shared/types/index.ts`
-- **Modified**: `src/shared/validations/ticket.ts`
+**Types & Validations (SDD Step 1-2)**
+- **Added**: `TicketWithMeta`, `UpdateTicketInput`, `ReorderTicketInput`, `BoardData` 타입 (`src/shared/types/index.ts`)
+- **Added**: `updateTicketSchema` — 부분 수정용 Zod 스키마 (모든 필드 optional)
+- **Added**: `reorderTicketSchema` — 상태/순서 변경 Zod 스키마
 
-### 📁 Files Modified
+**Services (SDD Step 3)**
+- **Added**: `ticketService.getBoard()` — 전체 보드 조회 (Done 24h 필터, 4칼럼 그룹화, isOverdue 계산)
+- **Added**: `ticketService.getById()` — 단일 티켓 조회 + isOverdue
+- **Added**: `ticketService.update()` — 부분 수정 (title, description, priority, dates)
+- **Added**: `ticketService.complete()` — 티켓 완료 처리 (status→DONE, completedAt, position 재계산)
+- **Added**: `ticketService.remove()` — 하드 삭제
+- **Added**: `ticketService.reorder()` — 트랜잭션 기반 상태/순서 변경 (startedAt/completedAt 비즈니스 규칙)
+- **Added**: `toTicketWithMeta()` — isOverdue 계산 헬퍼
 
+**Route Handlers (SDD Step 4)**
+- **Added**: `GET /api/tickets` — 보드 조회 (`app/api/tickets/route.ts`)
+- **Added**: `GET /api/tickets/:id` — 상세 조회 (`app/api/tickets/[id]/route.ts`)
+- **Added**: `PATCH /api/tickets/:id` — 수정 (`app/api/tickets/[id]/route.ts`)
+- **Added**: `DELETE /api/tickets/:id` — 삭제 (`app/api/tickets/[id]/route.ts`)
+- **Added**: `PATCH /api/tickets/:id/complete` — 완료 (`app/api/tickets/[id]/complete/route.ts`)
+- **Added**: `PATCH /api/tickets/reorder` — 순서 변경 (`app/api/tickets/reorder/route.ts`)
+
+**Tests (TC-API-002 ~ TC-API-008)**
+- **Added**: TC-API-002 보드 조회 테스트 8개 (`__tests__/services/ticketService.board.test.ts`)
+- **Added**: TC-API-003 상세 조회 테스트 3개 (`__tests__/services/ticketService.getById.test.ts`)
+- **Added**: TC-API-004 수정 테스트 8개 (`__tests__/services/ticketService.update.test.ts`)
+- **Added**: TC-API-005 완료 테스트 5개 (`__tests__/services/ticketService.complete.test.ts`)
+- **Added**: TC-API-006 삭제 테스트 2개 (`__tests__/services/ticketService.delete.test.ts`)
+- **Added**: TC-API-007 순서 변경 테스트 10개 (`__tests__/services/ticketService.reorder.test.ts`)
+- **Added**: TC-API-008 오버듀 테스트 7개 (`__tests__/services/ticketService.overdue.test.ts`)
+- **Added**: Route Handler 검증 테스트 5개 (`__tests__/api/tickets-detail.test.ts`)
+- **Added**: Reorder Route 검증 테스트 3개 (`__tests__/api/tickets-reorder.test.ts`)
+
+**Seed Data**
+- **Added**: `src/server/db/seed.ts` — 시드 데이터 (dotenv + dynamic import로 ESM 호이스팅 해결)
+
+### 📊 Test Results
+- Total: **68/68 passed (100%)** — 11 test suites
+- Coverage: TC-API-001 ~ TC-API-008 전체 완료
+- API 구현 현황: 7/7 엔드포인트 완료 (100%)
+
+### 📁 Files Modified (17 files, +1,316 / -2 lines)
+- `src/shared/types/index.ts` (+23, -0 lines)
+- `src/shared/validations/ticket.ts` (+46, -1 lines)
+- `src/server/services/ticketService.ts` (+224, -1 lines)
+- `app/api/tickets/route.ts` (+18, -0 lines)
+- `app/api/tickets/[id]/route.ts` (+120, -0 lines)
+- `app/api/tickets/[id]/complete/route.ts` (+38, -0 lines)
+- `app/api/tickets/reorder/route.ts` (+39, -0 lines)
+- `src/server/db/seed.ts` (+22, -0 lines)
 - `__tests__/api/tickets-detail.test.ts` (+81, -0 lines)
 - `__tests__/api/tickets-reorder.test.ts` (+62, -0 lines)
 - `__tests__/services/ticketService.board.test.ts` (+120, -0 lines)
@@ -48,14 +78,9 @@
 - `__tests__/services/ticketService.overdue.test.ts` (+115, -0 lines)
 - `__tests__/services/ticketService.reorder.test.ts` (+163, -0 lines)
 - `__tests__/services/ticketService.update.test.ts` (+98, -0 lines)
-- `app/api/tickets/[id]/complete/route.ts` (+38, -0 lines)
-- `app/api/tickets/[id]/route.ts` (+120, -0 lines)
-- `app/api/tickets/reorder/route.ts` (+39, -0 lines)
-- `app/api/tickets/route.ts` (+18, -0 lines)
-- `src/server/db/seed.ts` (+22, -0 lines)
-- `src/server/services/ticketService.ts` (+224, -1 lines)
-- `src/shared/types/index.ts` (+23, -0 lines)
-- `src/shared/validations/ticket.ts` (+46, -1 lines)
+
+### 🔗 Commit
+- `f826248` feat: 6개 API 엔드포인트 구현 및 테스트 (68 tests passed)
 
 ---
 

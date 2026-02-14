@@ -422,24 +422,6 @@ docs: API_SPEC.md 에러 코드 추가
 - `feature/*`: 기능 개발
 - `fix/*`: 버그 수정
 
-## Recent Changes
-
-> 최근 7-14일간의 주요 변경사항을 추적합니다.
-> 전체 히스토리는 [CHANGELOG.md](./CHANGELOG.md) 참조
-
-### 2026-02-14
-- **[001-create-ticket-api]** DB 마이그레이션 실행 (tickets 테이블 생성), drizzle.config dotenv 연동, Jest verbose, .env.local 추적 해제
-- **[001-create-ticket-api]** ✅ Changelog 스킬 + Documentation First + Context7 MCP 통합 (9 files, +1,818 lines)
-- **[001-create-ticket-api]** 재발 방지 시스템: Incident Report, 가이드라인, 가드레일 추가
-
-### 2026-02-13
-- **[001-create-ticket-api]** ⚠️ Changelog 스킬 구조 시행착오 (잘못된 구조 사용, 공식 문서 미확인)
-- **[001-create-ticket-api]** Speckit 워크플로우 통합 및 에러 처리 시스템 구축 (specs/, src/shared/errors/, 서비스 레이어 개선)
-- **[chapter5.1-init]** Changelog 시스템 구현 완료 (/changelog 스킬, helper script, 문서 템플릿)
-- **[chapter5.1-init]** TC-API-001 테스트 완료 (11/11 passed, 100% coverage)
-- **[Multi-branch]** DB 설정 파일 3개 브랜치에 추가 (chapter4.4.5, chapter5.1-SDD, chapter5.1-init)
-- **[chapter5.1-init]** Jest 통합 테스트 활성화 (ticketService mock 제거)
-
 ---
 
 **핵심 원칙과 거버넌스는 `.specify/memory/constitution.md` 참조**

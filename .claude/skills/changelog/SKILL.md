@@ -1,6 +1,6 @@
 ---
 name: changelog
-description: Record current session changes to CHANGELOG.md and update CLAUDE.md Recent Changes section
+description: Record current session changes to CHANGELOG.md
 user-invocable: true
 handoffs:
   - When finished logging changes, suggest running tests or committing
@@ -111,30 +111,7 @@ CHANGELOG.md 파일 처리:
 - 새 엔트리를 최상단에 추가 (시간 역순)
 - 같은 날짜 내에서는 최신이 위로
 
-### 6. Update CLAUDE.md Recent Changes
-
-CLAUDE.md의 "Recent Changes" 섹션 업데이트:
-
-**섹션이 없으면:**
-- 마지막 "---" 앞에 섹션 추가
-
-**섹션이 있으면:**
-- 새 엔트리 추가
-- 최근 7-14일만 유지 (오래된 것은 CHANGELOG.md에만)
-
-**형식:**
-```markdown
-## Recent Changes
-
-### YYYY-MM-DD
-- **[브랜치명]** 변경 요약
-- **[브랜치명]** 변경 요약
-
-### YYYY-MM-DD (이전)
-- **[브랜치명]** 변경 요약
-```
-
-### 7. Report to User
+### 6. Report to User
 
 생성된 changelog 엔트리를 사용자에게 보여주고:
 
@@ -145,18 +122,17 @@ CLAUDE.md의 "Recent Changes" 섹션 업데이트:
 
 다음 파일이 업데이트되었습니다:
 - CHANGELOG.md (새 엔트리 추가)
-- CLAUDE.md (Recent Changes 업데이트)
 
 staged 파일에 추가하시겠습니까? (yes/no)
 ```
 
-### 8. Optional Auto-commit
+### 7. Optional Auto-commit
 
 사용자가 원하면 자동 커밋:
 
 ```bash
 # 파일 staging
-git add CHANGELOG.md CLAUDE.md
+git add CHANGELOG.md
 
 # 커밋 (선택사항)
 git commit -m "docs: Update changelog - [요약]
