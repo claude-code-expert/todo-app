@@ -55,24 +55,24 @@ After:  "use context7 with @vercel/next for caching strategies" (최신 문서)
 3. API 키 발급 (무료: 월 1,000 요청)
 4. API 키 복사
 
-### Step 2: 환경 변수 설정 (1분)
+### Step 2: MCP 설정 (2분)
 
-프로젝트 루트에 `.env.local` 파일 수정:
+프로젝트 루트에 `.mcp.json` 파일을 생성합니다.
 
-```bash
-# .env.local
-CONTEXT7_API_KEY=your-api-key-here
+#### 방법 A: 로컬 실행 (API 키 불필요, 무제한)
 
-# 기존 환경 변수도 유지
-DATABASE_URL=postgresql://...
-NODE_ENV=development
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    }
+  }
+}
 ```
 
-**중요**: `.env.local`은 `.gitignore`에 포함되어 있으므로 커밋되지 않습니다.
-
-### Step 3: MCP 설정 확인 (1분)
-
-`.mcp.json` 파일이 이미 생성되어 있는지 확인:
+#### 방법 B: 호스팅 서버 (API 키 필요)
 
 ```json
 {
@@ -81,15 +81,25 @@ NODE_ENV=development
       "type": "http",
       "url": "https://mcp.context7.com/mcp",
       "headers": {
-        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
-      },
-      "description": "실시간 최신 라이브러리 문서 참조"
+        "CONTEXT7_API_KEY": "ctx7sk-your-api-key-here"
+      }
     }
   }
 }
 ```
 
-**이미 설정되어 있습니다!** (이 프로젝트에 포함됨)
+> **주의**: `.mcp.json`에 API 키를 직접 입력하는 경우, 반드시 `.gitignore`에 `.mcp.json`을 추가하세요.
+>
+> `${CONTEXT7_API_KEY}` 같은 환경 변수 참조 문법은 **시스템 환경 변수**(`~/.zshrc`의 `export`)만 읽습니다. `.env.local`은 Next.js 전용 파일이므로 `.mcp.json`에서 참조할 수 없습니다. 이 프로젝트에서 실제로 이 문제를 겪었고, API 키 직접 입력 + `.gitignore` 추가로 해결했습니다.
+
+### Step 3: .gitignore 확인
+
+`.mcp.json`이 `.gitignore`에 포함되어 있는지 확인:
+
+```bash
+# .gitignore에 다음이 포함되어야 함
+.mcp.json
+```
 
 ### Step 4: Claude Code 재시작 (1분)
 
@@ -193,20 +203,30 @@ Claude Code에서 다음 명령어 실행:
 #### Error: "context7 not connected"
 
 ```bash
-# 1. API 키 확인
-cat .env.local | grep CONTEXT7_API_KEY
-
-# 2. .mcp.json 확인
+# 1. .mcp.json에 API 키가 직접 입력되어 있는지 확인
 cat .mcp.json
 
+# 2. .mcp.json이 올바른 JSON 형식인지 확인
+python3 -c "import json; json.load(open('.mcp.json'))"
+
 # 3. Claude Code 재시작
+```
+
+#### Error: "${CONTEXT7_API_KEY}" 참조가 동작하지 않음
+
+```bash
+# .mcp.json의 ${VAR} 문법은 시스템 환경 변수만 읽음
+# .env.local은 Next.js 전용 → .mcp.json에서 참조 불가
+
+# 해결 방법 1: .mcp.json에 키를 직접 입력 (권장)
+# 해결 방법 2: ~/.zshrc에 export CONTEXT7_API_KEY=... 추가
 ```
 
 #### Error: "API key invalid"
 
 ```bash
 # https://context7.com에서 API 키 재발급
-# .env.local 업데이트
+# .mcp.json 업데이트
 # Claude Code 재시작
 ```
 
@@ -242,20 +262,20 @@ cat .mcp.json
 
 ### 무제한 사용 (선택사항)
 
-로컬 stdio 서버 사용:
+로컬 실행 방식은 API 키 없이 무제한 사용 가능:
 
-```bash
-# .mcp.json 수정
+```json
 {
   "mcpServers": {
     "context7": {
-      "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp", "--api-key", "${CONTEXT7_API_KEY}"]
+      "args": ["-y", "@upstash/context7-mcp"]
     }
   }
 }
 ```
+
+> npx로 로컬에서 실행하므로 호스팅 서버를 거치지 않습니다. 초기 실행 시 패키지 다운로드가 필요합니다.
 
 ---
 
