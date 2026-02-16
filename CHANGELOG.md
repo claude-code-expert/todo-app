@@ -12,6 +12,24 @@
 
 ---
 
+## [chapter6-frontend] - 2026-02-16 18:35
+
+### 🎯 Prompt
+> See commit message
+
+### ✅ Changes
+
+- **Renamed**: `docs/incidents/2026-02-13-changelog-skill-structure.md	docs/incidents/changelog-skill-structure-fix-report.md`
+- **Modified**: `tsconfig.tsbuildinfo`
+
+### 📁 Files Modified
+
+- `docs/incidents/{2026-02-13-changelog-skill-structure.md` (+0, -0 lines)
+- `tsconfig.tsbuildinfo` (+1, -1 lines)
+
+---
+
+
 ## [chapter6-frontend] - 2026-02-14 (Phase 4-5 + 테스트 인프라 수정)
 
 ### 🎯 Prompts
