@@ -72,13 +72,24 @@
 
 ### 2026-02-14 00:00 - 사용자 지적
 
-**사용자 피드백**:
-> "Co-Authored-By는 없다고 기록했는데 왜 없어진거지?
-> 그 무엇보다 한번이나 클로드 문서가 먼저아니야?"
+**사용자 피드백 (원문)**:
+> "Co-Authored-By는 포함하지 말라고 했고 처리 했다고 응답이 왔는데 왜 동일한 문제가 생긴거지?
+> "잘못 구현하고 있고 그걸 수정하라고 지시했으면, 그 무엇보다 클로드의 공식 문서를 참고하는게 먼저아니야?"
 
-**핵심 문제 지적**:
-1. 워크플로우와 실제 구현의 불일치
-2. **공식 문서를 확인하지 않음**
+#### 피드백 1: > "Co-Authored-By는 포함하지 말라고 했고 처리 했다고 응답이 왔는데 왜 동일한 문제가 생긴거지?
+
+**Skills 구조 문제와는 별개의 지적.** 커밋 시 `Co-Authored-By`를 포함하지 말라는 지시가 있었는데, Claude가 이를 제대로 반영하지 못한 것에 대한 피드백이다. Skills 구조 오류와 직접적인 관련은 없으나, Claude가 사용자의 지시사항을 정확히 따르지 않는 문제를 함께 지적한 것이다.
+
+#### 피드백 2: "잘못 구현하고 있고 그걸 수정하라고 지시했으면, 그 무엇보다 클로드의 공식 문서를 참고하는게 먼저아니야?"
+
+**이 인시던트의 핵심 지적.** "클로드 문서"는 Claude Code 공식 문서(https://code.claude.com/docs/skills.md)를 의미한다.
+
+공식 문서에는 올바른 Skills 구조가 이미 명시되어 있었다:
+> Custom slash commands have been merged into skills. A file at `.claude/commands/review.md` and a skill at `.claude/skills/review/SKILL.md` both create `/review`.
+
+Claude가 스킬 인식 실패 → 추측으로 롤백 → CHANGELOG에 거짓 정보 기록까지 진행하는 동안, **단 한 번도 공식 문서를 확인하지 않았다.** 한 번이라도 확인했다면 첫 시도에서 올바른 구조로 구현할 수 있었다.
+
+이 사건으로 인해 constitution.md에 **Core Principle VII: Documentation First (NON-NEGOTIABLE)** 원칙이 추가되었다.
 
 ---
 
