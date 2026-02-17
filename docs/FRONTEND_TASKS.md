@@ -40,10 +40,10 @@ FilterBar ──┼── BoardContainer ──── page.tsx
 
 | 순서 | 컴포넌트 | 파일 경로 | 명세 | 테스트 | 상태 |
 |------|----------|-----------|------|--------|------|
-| 1-1 | Button | `src/client/components/ui/Button.tsx` | COMPONENT_SPEC §3 | 12 tests | ⬜ |
-| 1-2 | Badge | `src/client/components/ui/Badge.tsx` | COMPONENT_SPEC §3 | TC-COMP-001 C001-7에서 검증 | ⬜ |
-| 1-3 | Modal | `src/client/components/ui/Modal.tsx` | COMPONENT_SPEC §3 | 5 tests | ⬜ |
-| 1-4 | ConfirmDialog | `src/client/components/ui/ConfirmDialog.tsx` | COMPONENT_SPEC §3 | TC-COMP-006 5 tests | ⬜ |
+| 1-1 | Button | `src/client/components/ui/Button.tsx` | COMPONENT_SPEC §3 | 12 tests | ✅ |
+| 1-2 | Badge | `src/client/components/ui/Badge.tsx` | COMPONENT_SPEC §3 | TC-COMP-001 C001-7에서 검증 | ✅ |
+| 1-3 | Modal | `src/client/components/ui/Modal.tsx` | COMPONENT_SPEC §3 | 5 tests | ✅ |
+| 1-4 | ConfirmDialog | `src/client/components/ui/ConfirmDialog.tsx` | COMPONENT_SPEC §3 | TC-COMP-006 5 tests | ✅ |
 
 **의존성**: 없음
 
@@ -53,10 +53,10 @@ FilterBar ──┼── BoardContainer ──── page.tsx
 
 | 순서 | 컴포넌트 | 파일 경로 | 명세 | 테스트 | 상태 |
 |------|----------|-----------|------|--------|------|
-| 2-1 | TicketCard | `src/client/components/ticket/TicketCard.tsx` | COMPONENT_SPEC §2.6 | TC-COMP-001 | ⬜ |
-| 2-2 | ColumnHeader | `src/client/components/board/ColumnHeader.tsx` | COMPONENT_SPEC §2.5 | 4 tests | ⬜ |
-| 2-3 | Column | `src/client/components/board/Column.tsx` | COMPONENT_SPEC §2.5 | TC-COMP-002 8 tests | ⬜ |
-| 2-4 | Board | `src/client/components/board/Board.tsx` | COMPONENT_SPEC §2.4 | TC-COMP-003 4 tests | ⬜ |
+| 2-1 | TicketCard | `src/client/components/ticket/TicketCard.tsx` | COMPONENT_SPEC §2.6 | TC-COMP-001 | ✅ |
+| 2-2 | ColumnHeader | `src/client/components/board/ColumnHeader.tsx` | COMPONENT_SPEC §2.5 | 4 tests | ✅ |
+| 2-3 | Column | `src/client/components/board/Column.tsx` | COMPONENT_SPEC §2.5 | TC-COMP-002 8 tests | ✅ |
+| 2-4 | Board | `src/client/components/board/Board.tsx` | COMPONENT_SPEC §2.4 | TC-COMP-003 4 tests | ✅ |
 
 **의존성**: Badge, Button (Phase 1)
 
@@ -112,13 +112,13 @@ CSS:  globals.css의 .btn, .btn-primary, .btn-secondary, .btn-danger, .btn-ghost
 ```
 
 TDD 체크리스트:
-- [ ] variant별 CSS 클래스 적용 (4종)
-- [ ] size별 CSS 클래스 적용 (3종)
-- [ ] 기본값 variant=primary, size=md
-- [ ] onClick 핸들러 호출
-- [ ] isLoading=true → 버튼 비활성화 + "처리중..." 표시
-- [ ] isLoading=true일 때 클릭 무시
-- [ ] children 렌더링
+- [x] variant별 CSS 클래스 적용 (4종)
+- [x] size별 CSS 클래스 적용 (3종)
+- [x] 기본값 variant=primary, size=md
+- [x] onClick 핸들러 호출
+- [x] isLoading=true → 버튼 비활성화 + "처리중..." 표시
+- [x] isLoading=true일 때 클릭 무시
+- [x] children 렌더링
 
 ---
 
@@ -132,8 +132,8 @@ CSS: globals.css의 .badge-priority-low, .badge-priority-medium, .badge-priority
 ```
 
 TDD 체크리스트:
-- [ ] PriorityBadge: LOW → 회색, MEDIUM → 파란색, HIGH → 빨간색 (TC-COMP-001 C001-7에서 검증)
-- [ ] DueDateBadge: 날짜 표시 + overdue 상태 반영
+- [x] PriorityBadge: LOW → 회색, MEDIUM → 파란색, HIGH → 빨간색 (TC-COMP-001 C001-7에서 검증)
+- [x] DueDateBadge: 날짜 표시 + overdue 상태 반영
 
 ---
 
@@ -146,11 +146,11 @@ CSS:  globals.css의 .modal-overlay, .modal-content
 ```
 
 TDD 체크리스트:
-- [ ] isOpen=false → 렌더링 안 됨
-- [ ] isOpen=true → 오버레이 + 컨텐츠 표시
-- [ ] ESC 키 → onClose 호출
-- [ ] 오버레이 클릭 → onClose 호출
-- [ ] 컨텐츠 영역 클릭 → onClose 호출 안 됨
+- [x] isOpen=false → 렌더링 안 됨
+- [x] isOpen=true → 오버레이 + 컨텐츠 표시
+- [x] ESC 키 → onClose 호출
+- [x] 오버레이 클릭 → onClose 호출
+- [x] 컨텐츠 영역 클릭 → onClose 호출 안 됨
 
 ---
 
@@ -164,11 +164,11 @@ Props: isOpen, message, onConfirm, onCancel
 ```
 
 TDD 체크리스트:
-- [ ] isOpen=false → 렌더링 안 됨
-- [ ] message 텍스트 표시
-- [ ] C006-1: 확인 클릭 → onConfirm 호출
-- [ ] C006-2: 취소 클릭 → onCancel 호출
-- [ ] 확인 버튼에 btn-danger 클래스
+- [x] isOpen=false → 렌더링 안 됨
+- [x] message 텍스트 표시
+- [x] C006-1: 확인 클릭 → onConfirm 호출
+- [x] C006-2: 취소 클릭 → onCancel 호출
+- [x] 확인 버튼에 btn-danger 클래스
 
 ---
 
@@ -182,13 +182,13 @@ Props: ticket (TicketWithMeta), onClick
 ```
 
 TDD 체크리스트:
-- [ ] C001-1: 제목, 우선순위 뱃지, 종료예정일 표시
-- [ ] C001-2: isOverdue=true → data-overdue 속성 + 빨간 테두리
-- [ ] C001-3: status=DONE → 완료 스타일
-- [ ] C001-4: dueDate=null → 종료예정일 미표시
-- [ ] C001-5: 클릭 → onClick 호출
-- [ ] C001-6: 긴 제목 말줄임 처리
-- [ ] C001-7: 우선순위별 뱃지 색상 (LOW/MEDIUM/HIGH)
+- [x] C001-1: 제목, 우선순위 뱃지, 종료예정일 표시
+- [x] C001-2: isOverdue=true → data-overdue 속성 + 빨간 테두리
+- [x] C001-3: status=DONE → 완료 스타일
+- [x] C001-4: dueDate=null → 종료예정일 미표시
+- [x] C001-5: 클릭 → onClick 호출
+- [x] C001-6: 긴 제목 말줄임 처리
+- [x] C001-7: 우선순위별 뱃지 색상 (LOW/MEDIUM/HIGH)
 
 ---
 
@@ -201,9 +201,9 @@ Props: title (string), count (number)
 ```
 
 TDD 체크리스트:
-- [ ] C002-3: 칼럼명 표시
-- [ ] C002-3: 티켓 수 뱃지 표시
-- [ ] 칼럼명 한글 매핑 (BACKLOG→백로그, TODO→할 일, IN_PROGRESS→진행 중, DONE→완료)
+- [x] C002-3: 칼럼명 표시
+- [x] C002-3: 티켓 수 뱃지 표시
+- [x] 칼럼명 한글 매핑 (BACKLOG→백로그, TODO→할 일, IN_PROGRESS→진행 중, DONE→완료)
 
 ---
 
@@ -217,10 +217,10 @@ Props: status (TicketStatus), tickets (TicketWithMeta[]), onTicketClick
 ```
 
 TDD 체크리스트:
-- [ ] C002-1: 티켓 있는 칼럼 → 카드 목록 + 개수 뱃지
-- [ ] C002-2: 빈 칼럼 → "이 칼럼에 티켓이 없습니다" 안내
-- [ ] C002-3: 칼럼 헤더에 칼럼명 + 티켓 수
-- [ ] SortableContext + useDroppable 연동
+- [x] C002-1: 티켓 있는 칼럼 → 카드 목록 + 개수 뱃지
+- [x] C002-2: 빈 칼럼 → "이 칼럼에 티켓이 없습니다" 안내
+- [x] C002-3: 칼럼 헤더에 칼럼명 + 티켓 수
+- [x] SortableContext + useDroppable 연동
 
 ---
 
@@ -234,9 +234,9 @@ Props: board (BoardData), onTicketClick
 ```
 
 TDD 체크리스트:
-- [ ] C003-1: 4칼럼 렌더링 (BACKLOG, TODO, IN_PROGRESS, DONE)
-- [ ] C003-2: Backlog가 좌측 사이드바로 배치
-- [ ] board-sidebar + board-main 레이아웃
+- [x] C003-1: 4칼럼 렌더링 (BACKLOG, TODO, IN_PROGRESS, DONE)
+- [x] C003-2: Backlog가 좌측 사이드바로 배치
+- [x] board-sidebar + board-main 레이아웃
 
 ---
 

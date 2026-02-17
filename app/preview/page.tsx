@@ -5,6 +5,29 @@ import { Button } from '@/client/components/ui/Button';
 import { PriorityBadge, DueDateBadge } from '@/client/components/ui/Badge';
 import { Modal } from '@/client/components/ui/Modal';
 import { ConfirmDialog } from '@/client/components/ui/ConfirmDialog';
+import { Board } from '@/client/components/board/Board';
+import type { BoardData, TicketWithMeta } from '@/shared/types';
+
+const mockBoard: BoardData = {
+  board: {
+    BACKLOG: [
+      { id: 1, title: '기술 스택 조사', description: '프레임워크 비교 분석', status: 'BACKLOG', priority: 'HIGH', position: -1024, plannedStartDate: null, dueDate: '2026-03-15', startedAt: null, completedAt: null, createdAt: new Date(), updatedAt: new Date(), isOverdue: false },
+      { id: 2, title: '디자인 시스템 검토', description: null, status: 'BACKLOG', priority: 'MEDIUM', position: 0, plannedStartDate: null, dueDate: null, startedAt: null, completedAt: null, createdAt: new Date(), updatedAt: new Date(), isOverdue: false },
+    ],
+    TODO: [
+      { id: 3, title: 'API 엔드포인트 설계', description: 'REST API 명세 작성', status: 'TODO', priority: 'HIGH', position: -2048, plannedStartDate: '2026-02-17', dueDate: '2026-02-14', startedAt: new Date(), completedAt: null, createdAt: new Date(), updatedAt: new Date(), isOverdue: true },
+      { id: 4, title: '데이터베이스 스키마 설계', description: null, status: 'TODO', priority: 'MEDIUM', position: -1024, plannedStartDate: null, dueDate: '2026-03-01', startedAt: new Date(), completedAt: null, createdAt: new Date(), updatedAt: new Date(), isOverdue: false },
+      { id: 5, title: '인증 시스템 구현', description: 'JWT 기반 인증', status: 'TODO', priority: 'LOW', position: 0, plannedStartDate: null, dueDate: '2026-03-10', startedAt: new Date(), completedAt: null, createdAt: new Date(), updatedAt: new Date(), isOverdue: false },
+    ],
+    IN_PROGRESS: [
+      { id: 6, title: '프런트엔드 컴포넌트 개발', description: 'React 컴포넌트 TDD', status: 'IN_PROGRESS', priority: 'HIGH', position: 0, plannedStartDate: '2026-02-10', dueDate: '2026-02-28', startedAt: new Date(), completedAt: null, createdAt: new Date(), updatedAt: new Date(), isOverdue: false },
+    ],
+    DONE: [
+      { id: 7, title: '프로젝트 초기 설정', description: 'Next.js + TypeScript 셋업', status: 'DONE', priority: 'MEDIUM', position: 0, plannedStartDate: null, dueDate: '2026-02-15', startedAt: new Date(), completedAt: new Date(), createdAt: new Date(), updatedAt: new Date(), isOverdue: false },
+    ],
+  },
+  total: 7,
+};
 
 export default function PreviewPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -82,7 +105,12 @@ export default function PreviewPage() {
         <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
           Phase 2: Board 컴포넌트
         </h2>
-        <p style={{ color: '#94a3b8' }}>구현 후 이곳에 TicketCard, ColumnHeader, Column, Board가 표시됩니다.</p>
+        <div style={{ height: '500px', border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden' }}>
+          <Board
+            board={mockBoard}
+            onTicketClick={(ticket) => alert(`클릭: ${ticket.title}`)}
+          />
+        </div>
       </section>
 
       {/* Phase 3: Ticket 컴포넌트 */}

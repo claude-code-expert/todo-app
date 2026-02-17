@@ -12,6 +12,42 @@
 
 ---
 
+## [chapter6-frontend-phase2] - 2026-02-17 18:19
+
+### 🎯 Prompt
+> See commit message
+
+### ✅ Changes
+
+- **Added**: `__tests__/components/Board.test.tsx`
+- **Added**: `__tests__/components/Column.test.tsx`
+- **Added**: `__tests__/components/ColumnHeader.test.tsx`
+- **Added**: `__tests__/components/TicketCard.test.tsx`
+- **Modified**: `app/preview/page.tsx`
+- **Modified**: `docs/FRONTEND_TASKS.md`
+- **Added**: `src/client/components/board/Board.tsx`
+- **Added**: `src/client/components/board/Column.tsx`
+- **Added**: `src/client/components/board/ColumnHeader.tsx`
+- **Added**: `src/client/components/ticket/TicketCard.tsx`
+- **Modified**: `tsconfig.tsbuildinfo`
+
+### 📁 Files Modified
+
+- `__tests__/components/Board.test.tsx` (+84, -0 lines)
+- `__tests__/components/Column.test.tsx` (+127, -0 lines)
+- `__tests__/components/ColumnHeader.test.tsx` (+29, -0 lines)
+- `__tests__/components/TicketCard.test.tsx` (+106, -0 lines)
+- `app/preview/page.tsx` (+29, -1 lines)
+- `docs/FRONTEND_TASKS.md` (+44, -44 lines)
+- `src/client/components/board/Board.tsx` (+46, -0 lines)
+- `src/client/components/board/Column.tsx` (+39, -0 lines)
+- `src/client/components/board/ColumnHeader.tsx` (+22, -0 lines)
+- `src/client/components/ticket/TicketCard.tsx` (+73, -0 lines)
+- `tsconfig.tsbuildinfo` (+1, -1 lines)
+
+---
+
+
 ## [chapter6-frontend-phase1] - 2026-02-17 17:51
 
 ### 🎯 Prompt
