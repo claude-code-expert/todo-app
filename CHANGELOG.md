@@ -12,6 +12,46 @@
 
 ---
 
+## [chapter6-frontend-phase5] - 2026-02-17 20:42
+
+### 🎯 Prompt
+> See commit message
+
+### ✅ Changes
+
+- **Added**: `__tests__/components/BoardContainer.test.tsx`
+- **Added**: `__tests__/components/BoardHeader.test.tsx`
+- **Added**: `__tests__/components/FilterBar.test.tsx`
+- **Modified**: `app/page.tsx`
+- **Deleted**: `app/preview/page.tsx`
+- **Modified**: `docs/FRONTEND_TASKS.md`
+- **Modified**: `src/client/components/board/Board.tsx`
+- **Added**: `src/client/components/board/BoardContainer.tsx`
+- **Added**: `src/client/components/board/BoardHeader.tsx`
+- **Added**: `src/client/components/board/FilterBar.tsx`
+- **Modified**: `src/client/components/ticket/TicketDetailView.tsx`
+- **Modified**: `src/client/hooks/useTickets.ts`
+- **Modified**: `tsconfig.tsbuildinfo`
+
+### 📁 Files Modified
+
+- `__tests__/components/BoardContainer.test.tsx` (+163, -0 lines)
+- `__tests__/components/BoardHeader.test.tsx` (+44, -0 lines)
+- `__tests__/components/FilterBar.test.tsx` (+68, -0 lines)
+- `app/page.tsx` (+9, -9 lines)
+- `app/preview/page.tsx` (+0, -169 lines)
+- `docs/FRONTEND_TASKS.md` (+20, -20 lines)
+- `src/client/components/board/Board.tsx` (+16, -3 lines)
+- `src/client/components/board/BoardContainer.tsx` (+216, -0 lines)
+- `src/client/components/board/BoardHeader.tsx` (+24, -0 lines)
+- `src/client/components/board/FilterBar.tsx` (+36, -0 lines)
+- `src/client/components/ticket/TicketDetailView.tsx` (+2, -2 lines)
+- `src/client/hooks/useTickets.ts` (+58, -8 lines)
+- `tsconfig.tsbuildinfo` (+1, -1 lines)
+
+---
+
+
 ## [chapter6-frontend-phase4] - 2026-02-17 19:54
 
 ### 🎯 Prompt

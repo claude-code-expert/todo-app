@@ -9,13 +9,18 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
+import type { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
 import { Column } from './Column';
+import { TicketCard } from '@/client/components/ticket/TicketCard';
 import { TICKET_STATUS } from '@/shared/types';
 import type { BoardData, TicketWithMeta } from '@/shared/types';
 
 interface BoardProps {
   board: BoardData;
+  activeTicket?: TicketWithMeta | null;
   onTicketClick: (ticket: TicketWithMeta) => void;
+  onDragStart?: (event: DragStartEvent) => void;
+  onDragEnd?: (event: DragEndEvent) => void;
 }
 
 const MAIN_STATUSES = [
@@ -24,14 +29,20 @@ const MAIN_STATUSES = [
   TICKET_STATUS.DONE,
 ] as const;
 
-export function Board({ board, onTicketClick }: BoardProps) {
+export function Board({ board, activeTicket, onTicketClick, onDragStart, onDragEnd }: BoardProps) {
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
   );
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCorners}>
+    <DndContext
+      id="board-dnd"
+      sensors={sensors}
+      collisionDetection={closestCorners}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+    >
       <div className="board-content">
         <div className="board-sidebar">
           <Column
@@ -53,7 +64,9 @@ export function Board({ board, onTicketClick }: BoardProps) {
           </div>
         </div>
       </div>
-      <DragOverlay />
+      <DragOverlay>
+        {activeTicket ? <TicketCard ticket={activeTicket} /> : null}
+      </DragOverlay>
     </DndContext>
   );
 }

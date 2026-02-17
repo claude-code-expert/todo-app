@@ -13,9 +13,9 @@ const STATUS_LABELS: Record<string, string> = {
   DONE: '완료',
 };
 
-function formatDate(date: Date | null): string {
+function formatDate(date: Date | string | null): string {
   if (!date) return '-';
-  return date.toISOString().split('T')[0];
+  return new Date(date).toISOString().split('T')[0];
 }
 
 export function TicketDetailView({ ticket }: TicketDetailViewProps) {

@@ -90,10 +90,10 @@ FilterBar ──┼── BoardContainer ──── page.tsx
 
 | 순서 | 컴포넌트 | 파일 경로 | 명세 | 테스트 | 상태 |
 |------|----------|-----------|------|--------|------|
-| 5-1 | BoardHeader | `src/client/components/board/BoardHeader.tsx` | COMPONENT_SPEC §2.2 | 4 tests | ⬜ |
-| 5-2 | FilterBar | `src/client/components/board/FilterBar.tsx` | COMPONENT_SPEC §2.3 | 6 tests | ⬜ |
-| 5-3 | BoardContainer | `src/client/components/board/BoardContainer.tsx` | COMPONENT_SPEC §2.1 | 6 tests | ⬜ |
-| 5-4 | page.tsx | `app/page.tsx` | — | — | ⬜ |
+| 5-1 | BoardHeader | `src/client/components/board/BoardHeader.tsx` | COMPONENT_SPEC §2.2 | 4 tests | ✅ |
+| 5-2 | FilterBar | `src/client/components/board/FilterBar.tsx` | COMPONENT_SPEC §2.3 | 6 tests | ✅ |
+| 5-3 | BoardContainer | `src/client/components/board/BoardContainer.tsx` | COMPONENT_SPEC §2.1 | 6 tests | ✅ |
+| 5-4 | page.tsx | `app/page.tsx` | — | — | ✅ |
 
 **의존성**: 모든 Phase 완료 후
 **BoardContainer** → useTickets + Board + BoardHeader + FilterBar + TicketModal
@@ -343,9 +343,9 @@ Props: onCreateClick
 ```
 
 TDD 체크리스트:
-- [ ] "Tika" 타이틀 표시
-- [ ] "새 업무" 버튼 표시 + onCreateClick 호출
-- [ ] 검색 placeholder (MVP — 비활성)
+- [x] "Tika" 타이틀 표시
+- [x] "새 업무" 버튼 표시 + onCreateClick 호출
+- [x] 검색 placeholder (MVP — 비활성)
 
 ---
 
@@ -358,11 +358,11 @@ CSS: globals.css의 .filter-btn
 ```
 
 TDD 체크리스트:
-- [ ] "이번주 업무" 버튼 + 카운트 표시
-- [ ] "일정 초과" 버튼 + 카운트 표시
-- [ ] 클릭 시 해당 필터 전달
-- [ ] 이미 활성화된 필터 클릭 → 'all' 토글
-- [ ] 활성 필터 버튼에 active 클래스
+- [x] "이번주 업무" 버튼 + 카운트 표시
+- [x] "일정 초과" 버튼 + 카운트 표시
+- [x] 클릭 시 해당 필터 전달
+- [x] 이미 활성화된 필터 클릭 → 'all' 토글
+- [x] 활성 필터 버튼에 active 클래스
 
 ---
 
@@ -376,12 +376,12 @@ Props: initialData (BoardData)
 ```
 
 TDD 체크리스트:
-- [ ] BoardHeader 렌더링
-- [ ] FilterBar 렌더링
-- [ ] Board 4칼럼 렌더링
-- [ ] "새 업무" → 생성 모달
-- [ ] 티켓 카드 클릭 → 상세 모달
-- [ ] overdue 필터 연동
+- [x] BoardHeader 렌더링
+- [x] FilterBar 렌더링
+- [x] Board 4칼럼 렌더링
+- [x] "새 업무" → 생성 모달
+- [x] 티켓 카드 클릭 → 상세 모달
+- [x] overdue 필터 연동
 
 ---
 
@@ -392,5 +392,5 @@ TDD 체크리스트:
 역할: 서버 컴포넌트에서 ticketService.getBoard() 호출 → BoardContainer에 전달
 ```
 
-- [ ] async 서버 컴포넌트로 전환
-- [ ] ticketService.getBoard() → BoardContainer initialData prop 전달
+- [x] async 서버 컴포넌트로 전환
+- [x] ticketService.getBoard() → BoardContainer initialData prop 전달
