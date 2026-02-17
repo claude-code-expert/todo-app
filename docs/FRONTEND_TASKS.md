@@ -1,7 +1,6 @@
 # 프런트엔드 구현 태스크
 
 > 컴포넌트 명세는 [COMPONENT_SPEC.md](./COMPONENT_SPEC.md), 테스트 케이스는 [TEST_CASES.md](./TEST_CASES.md) 참조
-> 최종 수정일: 2026-02-14
 
 ---
 
@@ -16,38 +15,37 @@
 ## 의존성 그래프
 
 ```
-Button ✅ ───────────────────────────────────┐
-Badge ✅ ────────────────────────────────────┤
-Modal ✅ ───────┬───────────────────────────┤
-                ├── ConfirmDialog ✅ ────────┤
-                │                           │
-TicketCard ✅ ──┤                           │
-ColumnHeader ✅ ┼── Column ✅  Board ✅ ────┤
-                │                           │
-TicketDetailView ✅                         │
-TicketForm ✅ ──┼── TicketModal ✅ ─────────┤
-                │                           │
-ticketApi ✅ ── useTickets ✅ ──────────────┤
-                                            │
-BoardHeader ✅ ─┤                           │
-FilterBar ✅ ───┼── BoardContainer ✅ ──── page.tsx ✅
+Button ────────────────────────────────────┐
+Badge ─────────────────────────────────────┤
+Modal ──────┬──────────────────────────────┤
+            ├── ConfirmDialog ─────────────┤
+            │                              │
+TicketCard ─┤                              │
+ColumnHeader┼── Column ── Board ───────────┤
+            │                              │
+TicketDetailView                           │
+TicketForm ─┼── TicketModal ───────────────┤
+            │                              │
+ticketApi ── useTickets ───────────────────┤
+                                           │
+BoardHeader ┤                              │
+FilterBar ──┼── BoardContainer ──── page.tsx
 ```
 
 ---
 
 ## 구현 순서
 
-### Phase 1: UI 컴포넌트 (의존성 없음)
+### Phase 1: UI 기본 컴포넌트 (의존성 없음)
 
 | 순서 | 컴포넌트 | 파일 경로 | 명세 | 테스트 | 상태 |
 |------|----------|-----------|------|--------|------|
-| 1-1 | Button | `src/client/components/ui/Button.tsx` | COMPONENT_SPEC §3 | 12/12 passed | ✅ |
-| 1-2 | Badge | `src/client/components/ui/Badge.tsx` | COMPONENT_SPEC §3 | TC-COMP-001 C001-7 | ✅ |
-| 1-3 | Modal | `src/client/components/ui/Modal.tsx` | COMPONENT_SPEC §3 | 5/5 passed | ✅ |
-| 1-4 | ConfirmDialog | `src/client/components/ui/ConfirmDialog.tsx` | COMPONENT_SPEC §3 | TC-COMP-006 5/5 passed | ✅ |
+| 1-1 | Button | `src/client/components/ui/Button.tsx` | COMPONENT_SPEC §3 | 12 tests | ⬜ |
+| 1-2 | Badge | `src/client/components/ui/Badge.tsx` | COMPONENT_SPEC §3 | TC-COMP-001 C001-7에서 검증 | ⬜ |
+| 1-3 | Modal | `src/client/components/ui/Modal.tsx` | COMPONENT_SPEC §3 | 5 tests | ⬜ |
+| 1-4 | ConfirmDialog | `src/client/components/ui/ConfirmDialog.tsx` | COMPONENT_SPEC §3 | TC-COMP-006 5 tests | ⬜ |
 
-**의존성**: 없음 (전체 구현 완료)
-**Phase 1 완료** — Button, Badge, Modal, ConfirmDialog 모두 구현 (32/32 tests passed)
+**의존성**: 없음
 
 ---
 
@@ -55,13 +53,12 @@ FilterBar ✅ ───┼── BoardContainer ✅ ──── page.tsx ✅
 
 | 순서 | 컴포넌트 | 파일 경로 | 명세 | 테스트 | 상태 |
 |------|----------|-----------|------|--------|------|
-| 2-1 | TicketCard | `src/client/components/ticket/TicketCard.tsx` | COMPONENT_SPEC §2.6 | TC-COMP-001 | ✅ |
-| 2-2 | ColumnHeader | `src/client/components/board/ColumnHeader.tsx` | COMPONENT_SPEC §2.5 | 4/4 passed | ✅ |
-| 2-3 | Column | `src/client/components/board/Column.tsx` | COMPONENT_SPEC §2.5 | TC-COMP-002 8/8 passed | ✅ |
-| 2-4 | Board | `src/client/components/board/Board.tsx` | COMPONENT_SPEC §2.4 | TC-COMP-003 4/4 passed | ✅ |
+| 2-1 | TicketCard | `src/client/components/ticket/TicketCard.tsx` | COMPONENT_SPEC §2.6 | TC-COMP-001 | ⬜ |
+| 2-2 | ColumnHeader | `src/client/components/board/ColumnHeader.tsx` | COMPONENT_SPEC §2.5 | 4 tests | ⬜ |
+| 2-3 | Column | `src/client/components/board/Column.tsx` | COMPONENT_SPEC §2.5 | TC-COMP-002 8 tests | ⬜ |
+| 2-4 | Board | `src/client/components/board/Board.tsx` | COMPONENT_SPEC §2.4 | TC-COMP-003 4 tests | ⬜ |
 
-**의존성**: Badge, TicketCard (구현 완료)
-**Phase 2 완료** — ColumnHeader, Column, Board 모두 구현 (48/48 total tests passed)
+**의존성**: Badge, Button (Phase 1)
 
 ---
 
@@ -69,12 +66,11 @@ FilterBar ✅ ───┼── BoardContainer ✅ ──── page.tsx ✅
 
 | 순서 | 컴포넌트 | 파일 경로 | 명세 | 테스트 | 상태 |
 |------|----------|-----------|------|--------|------|
-| 3-1 | TicketDetailView | `src/client/components/ticket/TicketDetailView.tsx` | COMPONENT_SPEC §2.7 | 3/3 passed | ✅ |
-| 3-2 | TicketForm | `src/client/components/ticket/TicketForm.tsx` | COMPONENT_SPEC §2.8 | TC-COMP-004 7/7 passed | ✅ |
-| 3-3 | TicketModal | `src/client/components/ticket/TicketModal.tsx` | COMPONENT_SPEC §2.7 | TC-COMP-005 7/7 passed | ✅ |
+| 3-1 | TicketDetailView | `src/client/components/ticket/TicketDetailView.tsx` | COMPONENT_SPEC §2.7 | 3 tests | ⬜ |
+| 3-2 | TicketForm | `src/client/components/ticket/TicketForm.tsx` | COMPONENT_SPEC §2.8 | TC-COMP-004 7 tests | ⬜ |
+| 3-3 | TicketModal | `src/client/components/ticket/TicketModal.tsx` | COMPONENT_SPEC §2.7 | TC-COMP-005 7 tests | ⬜ |
 
 **의존성**: Modal, Button, ConfirmDialog (Phase 1)
-**Phase 3 완료** — TicketDetailView, TicketForm, TicketModal 모두 구현 (65/65 total tests passed)
 
 ---
 
@@ -82,12 +78,11 @@ FilterBar ✅ ───┼── BoardContainer ✅ ──── page.tsx ✅
 
 | 순서 | 모듈 | 파일 경로 | 명세 | 테스트 | 상태 |
 |------|------|-----------|------|--------|------|
-| 4-1 | ticketApi | `src/client/api/ticketApi.ts` | COMPONENT_SPEC §4 | 11/11 passed | ✅ |
-| 4-2 | useTickets | `src/client/hooks/useTickets.ts` | COMPONENT_SPEC §4 | 10/10 passed | ✅ |
+| 4-1 | ticketApi | `src/client/api/ticketApi.ts` | COMPONENT_SPEC §4 | 11 tests | ⬜ |
+| 4-2 | useTickets | `src/client/hooks/useTickets.ts` | COMPONENT_SPEC §4 | 10 tests | ⬜ |
 
 **의존성**: 없음 (fetch 래퍼 + React Hook)
 **useTickets** → ticketApi
-**Phase 4 완료** — ticketApi, useTickets 모두 구현 (86/86 total tests passed)
 
 ---
 
@@ -95,15 +90,14 @@ FilterBar ✅ ───┼── BoardContainer ✅ ──── page.tsx ✅
 
 | 순서 | 컴포넌트 | 파일 경로 | 명세 | 테스트 | 상태 |
 |------|----------|-----------|------|--------|------|
-| 5-1 | BoardHeader | `src/client/components/board/BoardHeader.tsx` | COMPONENT_SPEC §2.2 | 4/4 passed | ✅ |
-| 5-2 | FilterBar | `src/client/components/board/FilterBar.tsx` | COMPONENT_SPEC §2.3 | 6/6 passed | ✅ |
-| 5-3 | BoardContainer | `src/client/components/board/BoardContainer.tsx` | COMPONENT_SPEC §2.1 | 6/6 passed | ✅ |
-| 5-4 | page.tsx | `app/page.tsx` | — | — | ✅ |
+| 5-1 | BoardHeader | `src/client/components/board/BoardHeader.tsx` | COMPONENT_SPEC §2.2 | 4 tests | ⬜ |
+| 5-2 | FilterBar | `src/client/components/board/FilterBar.tsx` | COMPONENT_SPEC §2.3 | 6 tests | ⬜ |
+| 5-3 | BoardContainer | `src/client/components/board/BoardContainer.tsx` | COMPONENT_SPEC §2.1 | 6 tests | ⬜ |
+| 5-4 | page.tsx | `app/page.tsx` | — | — | ⬜ |
 
 **의존성**: 모든 Phase 완료 후
 **BoardContainer** → useTickets + Board + BoardHeader + FilterBar + TicketModal
 **page.tsx** → 서버 컴포넌트에서 ticketService.getBoard() → BoardContainer
-**Phase 5 완료** — BoardHeader, FilterBar, BoardContainer, page.tsx 모두 구현 (102/102 total tests passed)
 
 ---
 
@@ -118,11 +112,28 @@ CSS:  globals.css의 .btn, .btn-primary, .btn-secondary, .btn-danger, .btn-ghost
 ```
 
 TDD 체크리스트:
-- [x] variant별 CSS 클래스 적용
-- [x] size별 CSS 클래스 적용
-- [x] isLoading=true → 버튼 비활성화 + 로딩 표시
-- [x] onClick 핸들러 호출
-- [x] isLoading=true일 때 클릭 무시
+- [ ] variant별 CSS 클래스 적용 (4종)
+- [ ] size별 CSS 클래스 적용 (3종)
+- [ ] 기본값 variant=primary, size=md
+- [ ] onClick 핸들러 호출
+- [ ] isLoading=true → 버튼 비활성화 + "처리중..." 표시
+- [ ] isLoading=true일 때 클릭 무시
+- [ ] children 렌더링
+
+---
+
+### Badge (Phase 1-2)
+
+```
+파일: src/client/components/ui/Badge.tsx
+PriorityBadge: priority prop → data-priority 속성 + 라벨 텍스트 (낮음/보통/높음)
+DueDateBadge: dueDate, isOverdue props → 날짜 텍스트 + data-overdue 속성
+CSS: globals.css의 .badge-priority-low, .badge-priority-medium, .badge-priority-high, .badge-due-date
+```
+
+TDD 체크리스트:
+- [ ] PriorityBadge: LOW → 회색, MEDIUM → 파란색, HIGH → 빨간색 (TC-COMP-001 C001-7에서 검증)
+- [ ] DueDateBadge: 날짜 표시 + overdue 상태 반영
 
 ---
 
@@ -135,11 +146,11 @@ CSS:  globals.css의 .modal-overlay, .modal-content
 ```
 
 TDD 체크리스트:
-- [x] isOpen=false → 렌더링 안 됨
-- [x] isOpen=true → 오버레이 + 컨텐츠 표시
-- [x] ESC 키 → onClose 호출
-- [x] 오버레이 클릭 → onClose 호출
-- [x] 컨텐츠 영역 클릭 → onClose 호출 안 됨
+- [ ] isOpen=false → 렌더링 안 됨
+- [ ] isOpen=true → 오버레이 + 컨텐츠 표시
+- [ ] ESC 키 → onClose 호출
+- [ ] 오버레이 클릭 → onClose 호출
+- [ ] 컨텐츠 영역 클릭 → onClose 호출 안 됨
 
 ---
 
@@ -153,8 +164,31 @@ Props: isOpen, message, onConfirm, onCancel
 ```
 
 TDD 체크리스트:
-- [x] C006-1: 확인 클릭 → onConfirm 호출
-- [x] C006-2: 취소 클릭 → onCancel 호출
+- [ ] isOpen=false → 렌더링 안 됨
+- [ ] message 텍스트 표시
+- [ ] C006-1: 확인 클릭 → onConfirm 호출
+- [ ] C006-2: 취소 클릭 → onCancel 호출
+- [ ] 확인 버튼에 btn-danger 클래스
+
+---
+
+### TicketCard (Phase 2-1)
+
+```
+파일: src/client/components/ticket/TicketCard.tsx
+Props: ticket (TicketWithMeta), onClick
+의존: PriorityBadge, DueDateBadge, @dnd-kit/sortable
+테스트: TC-COMP-001 (C001-1 ~ C001-7)
+```
+
+TDD 체크리스트:
+- [ ] C001-1: 제목, 우선순위 뱃지, 종료예정일 표시
+- [ ] C001-2: isOverdue=true → data-overdue 속성 + 빨간 테두리
+- [ ] C001-3: status=DONE → 완료 스타일
+- [ ] C001-4: dueDate=null → 종료예정일 미표시
+- [ ] C001-5: 클릭 → onClick 호출
+- [ ] C001-6: 긴 제목 말줄임 처리
+- [ ] C001-7: 우선순위별 뱃지 색상 (LOW/MEDIUM/HIGH)
 
 ---
 
@@ -167,7 +201,9 @@ Props: title (string), count (number)
 ```
 
 TDD 체크리스트:
-- [x] C002-3: 칼럼명 + 티켓 수 표시
+- [ ] C002-3: 칼럼명 표시
+- [ ] C002-3: 티켓 수 뱃지 표시
+- [ ] 칼럼명 한글 매핑 (BACKLOG→백로그, TODO→할 일, IN_PROGRESS→진행 중, DONE→완료)
 
 ---
 
@@ -181,9 +217,10 @@ Props: status (TicketStatus), tickets (TicketWithMeta[]), onTicketClick
 ```
 
 TDD 체크리스트:
-- [x] C002-1: 티켓 있는 칼럼 → 카드 목록 + 개수 뱃지
-- [x] C002-2: 빈 칼럼 → "이 칼럼에 티켓이 없습니다" 안내
-- [x] C002-3: 칼럼 헤더에 칼럼명 + 티켓 수
+- [ ] C002-1: 티켓 있는 칼럼 → 카드 목록 + 개수 뱃지
+- [ ] C002-2: 빈 칼럼 → "이 칼럼에 티켓이 없습니다" 안내
+- [ ] C002-3: 칼럼 헤더에 칼럼명 + 티켓 수
+- [ ] SortableContext + useDroppable 연동
 
 ---
 
@@ -197,8 +234,9 @@ Props: board (BoardData), onTicketClick
 ```
 
 TDD 체크리스트:
-- [x] C003-1: 4칼럼 렌더링 (BACKLOG, TODO, IN_PROGRESS, DONE)
-- [x] C003-2: Backlog가 좌측 사이드바로 배치
+- [ ] C003-1: 4칼럼 렌더링 (BACKLOG, TODO, IN_PROGRESS, DONE)
+- [ ] C003-2: Backlog가 좌측 사이드바로 배치
+- [ ] board-sidebar + board-main 레이아웃
 
 ---
 
@@ -211,8 +249,9 @@ Props: ticket (TicketWithMeta)
 ```
 
 TDD 체크리스트:
-- [x] C005-2: status, startedAt, completedAt, createdAt 읽기 전용 표시
-- [x] 값 없으면 "-" 표시
+- [ ] C005-2: status, startedAt, completedAt, createdAt 읽기 전용 표시
+- [ ] 값 없으면 "-" 표시
+- [ ] form-readonly 클래스 적용
 
 ---
 
@@ -226,13 +265,13 @@ Props: mode (create|edit), initialData, onSubmit, onCancel, isLoading
 ```
 
 TDD 체크리스트:
-- [x] C004-1: 생성 모드 → 빈 필드, 우선순위 MEDIUM 기본값
-- [x] C004-2: 수정 모드 → initialData 반영
-- [x] C004-3: 빈 제목 → "제목을 입력해주세요"
-- [x] C004-4: 과거 종료예정일 → "종료예정일은 오늘 이후 날짜를 선택해주세요"
-- [x] C004-5: plannedStartDate date input 렌더링
-- [x] C004-6: 정상 제출 → onSubmit 호출 + 데이터 확인
-- [x] C004-7: isLoading=true → 버튼 비활성화 + 스피너
+- [ ] C004-1: 생성 모드 → 빈 필드, 우선순위 MEDIUM 기본값
+- [ ] C004-2: 수정 모드 → initialData 반영
+- [ ] C004-3: 빈 제목 → "제목을 입력해주세요"
+- [ ] C004-4: 과거 종료예정일 → "종료예정일은 오늘 이후 날짜를 선택해주세요"
+- [ ] C004-5: plannedStartDate date input 렌더링
+- [ ] C004-6: 정상 제출 → onSubmit 호출 + 데이터 확인
+- [ ] C004-7: isLoading=true → 버튼 비활성화 + 스피너
 
 ---
 
@@ -246,12 +285,12 @@ Props: ticket, isOpen, onClose, onUpdate, onDelete
 ```
 
 TDD 체크리스트:
-- [x] C005-1: isOpen에 따라 표시/숨김
-- [x] C005-2: 읽기 전용 필드 표시
-- [x] C005-3: 편집 가능 필드
-- [x] C005-4: ESC → onClose
-- [x] C005-5: 바깥 클릭 → onClose
-- [x] C005-6: 삭제 → ConfirmDialog → 확인 → onDelete
+- [ ] C005-1: isOpen에 따라 표시/숨김
+- [ ] C005-2: 읽기 전용 필드 표시
+- [ ] C005-3: 편집 가능 필드
+- [ ] C005-4: ESC → onClose
+- [ ] C005-5: 바깥 클릭 → onClose
+- [ ] C005-6: 삭제 → ConfirmDialog → 확인 → onDelete
 
 ---
 
@@ -261,17 +300,16 @@ TDD 체크리스트:
 파일: src/client/api/ticketApi.ts
 함수: getBoard, create, update, remove, reorder, complete
 의존: 없음 (fetch 래퍼)
-테스트: 11/11 passed
 ```
 
 TDD 체크리스트:
-- [x] getBoard: GET /api/tickets 호출 + 응답 반환
-- [x] create: POST /api/tickets 호출 + Ticket 반환
-- [x] update: PATCH /api/tickets/:id 호출 + Ticket 반환
-- [x] remove: DELETE /api/tickets/:id 호출
-- [x] reorder: PATCH /api/tickets/reorder 호출 + 결과 반환
-- [x] complete: PATCH /api/tickets/:id/complete 호출 + Ticket 반환
-- [x] 에러 응답 시 error.message throw
+- [ ] getBoard: GET /api/tickets 호출 + 응답 반환
+- [ ] create: POST /api/tickets 호출 + Ticket 반환
+- [ ] update: PATCH /api/tickets/:id 호출 + Ticket 반환
+- [ ] remove: DELETE /api/tickets/:id 호출
+- [ ] reorder: PATCH /api/tickets/reorder 호출 + 결과 반환
+- [ ] complete: PATCH /api/tickets/:id/complete 호출 + Ticket 반환
+- [ ] 에러 응답 시 error.message throw
 
 ---
 
@@ -282,18 +320,17 @@ TDD 체크리스트:
 반환: { board, isLoading, error, create, update, remove, reorder, complete }
 의존: ticketApi
 패턴: API 호출 → refreshBoard
-테스트: 10/10 passed
 ```
 
 TDD 체크리스트:
-- [x] initialData로 board 상태 초기화
-- [x] create 호출 → ticketApi.create + getBoard
-- [x] update 호출 → ticketApi.update + getBoard
-- [x] remove 호출 → ticketApi.remove + getBoard
-- [x] reorder 호출 → ticketApi.reorder + getBoard
-- [x] complete 호출 → ticketApi.complete + getBoard
-- [x] 실패 시 error 상태 설정
-- [x] API 호출 중 isLoading=true
+- [ ] initialData로 board 상태 초기화
+- [ ] create 호출 → ticketApi.create + getBoard
+- [ ] update 호출 → ticketApi.update + getBoard
+- [ ] remove 호출 → ticketApi.remove + getBoard
+- [ ] reorder 호출 → ticketApi.reorder + getBoard
+- [ ] complete 호출 → ticketApi.complete + getBoard
+- [ ] 실패 시 error 상태 설정
+- [ ] API 호출 중 isLoading=true
 
 ---
 
@@ -303,13 +340,12 @@ TDD 체크리스트:
 파일: src/client/components/board/BoardHeader.tsx
 Props: onCreateClick
 의존: Button
-테스트: 4/4 passed
 ```
 
 TDD 체크리스트:
-- [x] "Tika" 타이틀 표시
-- [x] "새 업무" 버튼 표시 + onCreateClick 호출
-- [x] 검색 placeholder (MVP — 비활성)
+- [ ] "Tika" 타이틀 표시
+- [ ] "새 업무" 버튼 표시 + onCreateClick 호출
+- [ ] 검색 placeholder (MVP — 비활성)
 
 ---
 
@@ -319,15 +355,14 @@ TDD 체크리스트:
 파일: src/client/components/board/FilterBar.tsx
 Props: activeFilter, onFilterChange, counts
 CSS: globals.css의 .filter-btn
-테스트: 6/6 passed
 ```
 
 TDD 체크리스트:
-- [x] "이번주 업무" 버튼 + 카운트 표시
-- [x] "일정 초과" 버튼 + 카운트 표시
-- [x] 클릭 시 해당 필터 전달
-- [x] 이미 활성화된 필터 클릭 → 'all' 토글
-- [x] 활성 필터 버튼에 active 클래스
+- [ ] "이번주 업무" 버튼 + 카운트 표시
+- [ ] "일정 초과" 버튼 + 카운트 표시
+- [ ] 클릭 시 해당 필터 전달
+- [ ] 이미 활성화된 필터 클릭 → 'all' 토글
+- [ ] 활성 필터 버튼에 active 클래스
 
 ---
 
@@ -338,16 +373,15 @@ TDD 체크리스트:
 Props: initialData (BoardData)
 의존: Board, BoardHeader, FilterBar, TicketModal, useTickets
 역할: 필터 상태, 모달 제어, CRUD 핸들링
-테스트: 6/6 passed
 ```
 
 TDD 체크리스트:
-- [x] BoardHeader 렌더링
-- [x] FilterBar 렌더링
-- [x] Board 4칼럼 렌더링
-- [x] "새 업무" → 생성 모달
-- [x] 티켓 카드 클릭 → 상세 모달
-- [x] overdue 필터 연동
+- [ ] BoardHeader 렌더링
+- [ ] FilterBar 렌더링
+- [ ] Board 4칼럼 렌더링
+- [ ] "새 업무" → 생성 모달
+- [ ] 티켓 카드 클릭 → 상세 모달
+- [ ] overdue 필터 연동
 
 ---
 
@@ -358,5 +392,5 @@ TDD 체크리스트:
 역할: 서버 컴포넌트에서 ticketService.getBoard() 호출 → BoardContainer에 전달
 ```
 
-- [x] async 서버 컴포넌트로 전환
-- [x] ticketService.getBoard() → BoardContainer initialData prop 전달
+- [ ] async 서버 컴포넌트로 전환
+- [ ] ticketService.getBoard() → BoardContainer initialData prop 전달

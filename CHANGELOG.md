@@ -19,6 +19,50 @@
 
 ### ✅ Changes
 
+- **Added**: `__tests__/components/Button.test.tsx`
+- **Added**: `__tests__/components/ConfirmDialog.test.tsx`
+- **Added**: `__tests__/components/Modal.test.tsx`
+- **Modified**: `app/globals.css`
+- **Added**: `app/preview/page.tsx`
+- **Modified**: `docs/FRONTEND_TASKS.md`
+- **Modified**: `package-lock.json`
+- **Modified**: `package.json`
+- **Added**: `postcss.config.mjs`
+- **Added**: `src/client/components/ui/Badge.tsx`
+- **Added**: `src/client/components/ui/Button.tsx`
+- **Added**: `src/client/components/ui/ConfirmDialog.tsx`
+- **Added**: `src/client/components/ui/Modal.tsx`
+- **Deleted**: `tailwind.config.ts`
+- **Modified**: `tsconfig.tsbuildinfo`
+
+### 📁 Files Modified
+
+- `__tests__/components/Button.test.tsx` (+61, -0 lines)
+- `__tests__/components/ConfirmDialog.test.tsx` (+71, -0 lines)
+- `__tests__/components/Modal.test.tsx` (+60, -0 lines)
+- `app/globals.css` (+1, -1 lines)
+- `app/preview/page.tsx` (+105, -0 lines)
+- `docs/FRONTEND_TASKS.md` (+144, -110 lines)
+- `package-lock.json` (+624, -1 lines)
+- `package.json` (+1, -0 lines)
+- `postcss.config.mjs` (+8, -0 lines)
+- `src/client/components/ui/Badge.tsx` (+37, -0 lines)
+- `src/client/components/ui/Button.tsx` (+27, -0 lines)
+- `src/client/components/ui/ConfirmDialog.tsx` (+34, -0 lines)
+- `src/client/components/ui/Modal.tsx` (+32, -0 lines)
+- `tailwind.config.ts` (+0, -14 lines)
+- `tsconfig.tsbuildinfo` (+1, -1 lines)
+
+---
+
+
+## [chapter6-frontend-phase1] - 2026-02-17 17:51
+
+### 🎯 Prompt
+> See commit message
+
+### ✅ Changes
+
 - **Deleted**: `.mcp.json`
 
 ### 📁 Files Modified

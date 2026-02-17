@@ -3,7 +3,7 @@
 /* ============================================
    Design Tokens
    ============================================ */
-@theme {
+:root {
   /* Colors - Board */
   --color-board-bg: #f1f2f4;
   --color-sidebar-bg: #e8e9eb;
