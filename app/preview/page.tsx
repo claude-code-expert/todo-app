@@ -6,6 +6,8 @@ import { PriorityBadge, DueDateBadge } from '@/client/components/ui/Badge';
 import { Modal } from '@/client/components/ui/Modal';
 import { ConfirmDialog } from '@/client/components/ui/ConfirmDialog';
 import { Board } from '@/client/components/board/Board';
+import { TicketForm } from '@/client/components/ticket/TicketForm';
+import { TicketModal } from '@/client/components/ticket/TicketModal';
 import type { BoardData, TicketWithMeta } from '@/shared/types';
 
 const mockBoard: BoardData = {
@@ -32,6 +34,8 @@ const mockBoard: BoardData = {
 export default function PreviewPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState<TicketWithMeta | null>(null);
 
   return (
     <main style={{ padding: '32px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -108,7 +112,7 @@ export default function PreviewPage() {
         <div style={{ height: '500px', border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden' }}>
           <Board
             board={mockBoard}
-            onTicketClick={(ticket) => alert(`클릭: ${ticket.title}`)}
+            onTicketClick={(ticket) => setSelectedTicket(ticket)}
           />
         </div>
       </section>
@@ -118,7 +122,39 @@ export default function PreviewPage() {
         <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
           Phase 3: Ticket 컴포넌트
         </h2>
-        <p style={{ color: '#94a3b8' }}>구현 후 이곳에 TicketDetailView, TicketForm, TicketModal이 표시됩니다.</p>
+
+        {/* TicketForm (생성 모드) */}
+        <h3 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#475569' }}>TicketForm (생성 모드)</h3>
+        <div style={{ marginBottom: '24px' }}>
+          <Button onClick={() => setIsCreateOpen(true)}>티켓 생성</Button>
+        </div>
+        <Modal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)}>
+          <div className="modal-header">
+            <h2>새 업무 생성</h2>
+          </div>
+          <div className="modal-body">
+            <TicketForm
+              mode="create"
+              onSubmit={(data) => { alert(`생성: ${JSON.stringify(data, null, 2)}`); setIsCreateOpen(false); }}
+              onCancel={() => setIsCreateOpen(false)}
+            />
+          </div>
+        </Modal>
+
+        {/* TicketModal (상세/수정/삭제) */}
+        <h3 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#475569' }}>TicketModal</h3>
+        <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '16px' }}>
+          위 Board에서 티켓 카드를 클릭하면 TicketModal이 열립니다.
+        </p>
+        {selectedTicket && (
+          <TicketModal
+            ticket={selectedTicket}
+            isOpen={true}
+            onClose={() => setSelectedTicket(null)}
+            onUpdate={(id, data) => { alert(`수정 [${id}]: ${JSON.stringify(data, null, 2)}`); setSelectedTicket(null); }}
+            onDelete={(id) => { alert(`삭제: ${id}`); setSelectedTicket(null); }}
+          />
+        )}
       </section>
 
       {/* Phase 4-5 */}

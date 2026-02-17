@@ -1,6 +1,14 @@
 'use client';
 
-import { DndContext, DragOverlay, closestCorners } from '@dnd-kit/core';
+import {
+  DndContext,
+  DragOverlay,
+  MouseSensor,
+  TouchSensor,
+  closestCorners,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
 import { Column } from './Column';
 import { TICKET_STATUS } from '@/shared/types';
 import type { BoardData, TicketWithMeta } from '@/shared/types';
@@ -17,8 +25,13 @@ const MAIN_STATUSES = [
 ] as const;
 
 export function Board({ board, onTicketClick }: BoardProps) {
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
+  );
+
   return (
-    <DndContext collisionDetection={closestCorners}>
+    <DndContext sensors={sensors} collisionDetection={closestCorners}>
       <div className="board-content">
         <div className="board-sidebar">
           <Column

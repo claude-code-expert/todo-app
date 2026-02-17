@@ -6,7 +6,11 @@ import type { BoardData } from '@/shared/types';
 jest.mock('@dnd-kit/core', () => ({
   DndContext: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   DragOverlay: () => null,
+  MouseSensor: jest.fn(),
+  TouchSensor: jest.fn(),
   closestCorners: jest.fn(),
+  useSensor: jest.fn(),
+  useSensors: jest.fn(),
   useDroppable: () => ({
     setNodeRef: jest.fn(),
     isOver: false,

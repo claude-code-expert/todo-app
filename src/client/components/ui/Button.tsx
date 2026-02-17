@@ -1,6 +1,7 @@
 'use client';
 
 interface ButtonProps {
+  type?: 'button' | 'submit' | 'reset';
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
@@ -9,6 +10,7 @@ interface ButtonProps {
 }
 
 export function Button({
+  type = 'button',
   variant = 'primary',
   size = 'md',
   isLoading = false,
@@ -17,6 +19,7 @@ export function Button({
 }: ButtonProps) {
   return (
     <button
+      type={type}
       className={`btn btn-${variant} btn-${size}`}
       disabled={isLoading}
       onClick={isLoading ? undefined : onClick}

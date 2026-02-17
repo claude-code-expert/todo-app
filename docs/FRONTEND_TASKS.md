@@ -66,9 +66,9 @@ FilterBar ──┼── BoardContainer ──── page.tsx
 
 | 순서 | 컴포넌트 | 파일 경로 | 명세 | 테스트 | 상태 |
 |------|----------|-----------|------|--------|------|
-| 3-1 | TicketDetailView | `src/client/components/ticket/TicketDetailView.tsx` | COMPONENT_SPEC §2.7 | 3 tests | ⬜ |
-| 3-2 | TicketForm | `src/client/components/ticket/TicketForm.tsx` | COMPONENT_SPEC §2.8 | TC-COMP-004 7 tests | ⬜ |
-| 3-3 | TicketModal | `src/client/components/ticket/TicketModal.tsx` | COMPONENT_SPEC §2.7 | TC-COMP-005 7 tests | ⬜ |
+| 3-1 | TicketDetailView | `src/client/components/ticket/TicketDetailView.tsx` | COMPONENT_SPEC §2.7 | 3 tests | ✅ |
+| 3-2 | TicketForm | `src/client/components/ticket/TicketForm.tsx` | COMPONENT_SPEC §2.8 | TC-COMP-004 7 tests | ✅ |
+| 3-3 | TicketModal | `src/client/components/ticket/TicketModal.tsx` | COMPONENT_SPEC §2.7 | TC-COMP-005 7 tests | ✅ |
 
 **의존성**: Modal, Button, ConfirmDialog (Phase 1)
 
@@ -249,9 +249,9 @@ Props: ticket (TicketWithMeta)
 ```
 
 TDD 체크리스트:
-- [ ] C005-2: status, startedAt, completedAt, createdAt 읽기 전용 표시
-- [ ] 값 없으면 "-" 표시
-- [ ] form-readonly 클래스 적용
+- [x] C005-2: status, startedAt, completedAt, createdAt 읽기 전용 표시
+- [x] 값 없으면 "-" 표시
+- [x] form-readonly 클래스 적용
 
 ---
 
@@ -265,13 +265,13 @@ Props: mode (create|edit), initialData, onSubmit, onCancel, isLoading
 ```
 
 TDD 체크리스트:
-- [ ] C004-1: 생성 모드 → 빈 필드, 우선순위 MEDIUM 기본값
-- [ ] C004-2: 수정 모드 → initialData 반영
-- [ ] C004-3: 빈 제목 → "제목을 입력해주세요"
-- [ ] C004-4: 과거 종료예정일 → "종료예정일은 오늘 이후 날짜를 선택해주세요"
-- [ ] C004-5: plannedStartDate date input 렌더링
-- [ ] C004-6: 정상 제출 → onSubmit 호출 + 데이터 확인
-- [ ] C004-7: isLoading=true → 버튼 비활성화 + 스피너
+- [x] C004-1: 생성 모드 → 빈 필드, 우선순위 MEDIUM 기본값
+- [x] C004-2: 수정 모드 → initialData 반영
+- [x] C004-3: 빈 제목 → "제목을 입력해주세요"
+- [x] C004-4: 과거 종료예정일 → "종료예정일은 오늘 이후 날짜를 선택해주세요"
+- [x] C004-5: plannedStartDate date input 렌더링
+- [x] C004-6: 정상 제출 → onSubmit 호출 + 데이터 확인
+- [x] C004-7: isLoading=true → 버튼 비활성화 + 스피너
 
 ---
 
@@ -285,12 +285,12 @@ Props: ticket, isOpen, onClose, onUpdate, onDelete
 ```
 
 TDD 체크리스트:
-- [ ] C005-1: isOpen에 따라 표시/숨김
-- [ ] C005-2: 읽기 전용 필드 표시
-- [ ] C005-3: 편집 가능 필드
-- [ ] C005-4: ESC → onClose
-- [ ] C005-5: 바깥 클릭 → onClose
-- [ ] C005-6: 삭제 → ConfirmDialog → 확인 → onDelete
+- [x] C005-1: isOpen에 따라 표시/숨김
+- [x] C005-2: 읽기 전용 필드 표시
+- [x] C005-3: 편집 가능 필드
+- [x] C005-4: ESC → onClose
+- [x] C005-5: 바깥 클릭 → onClose
+- [x] C005-6: 삭제 → ConfirmDialog → 확인 → onDelete
 
 ---
 
