@@ -19,6 +19,22 @@
 
 ### ✅ Changes
 
+- **Modified**: `tsconfig.json`
+
+### 📁 Files Modified
+
+- `tsconfig.json` (+35, -9 lines)
+
+---
+
+
+## [chapter7-deploy] - 2026-02-18 21:40
+
+### 🎯 Prompt
+> See commit message
+
+### ✅ Changes
+
 - **Modified**: `package-lock.json`
 - **Modified**: `package.json`
 
