@@ -27,3 +27,4 @@ drizzle/meta/
 
 # reference docs
 /reference/docs/*
+.vercel

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/client/components/ui/Button';
-import { createTicketSchema } from '@/shared/validations/ticket';
+import { createTicketSchema, updateTicketSchema } from '@/shared/validations/ticket';
 import type { Ticket, CreateTicketInput, UpdateTicketInput, TicketPriority } from '@/shared/types';
 
 interface TicketFormProps {
@@ -30,15 +30,24 @@ export function TicketForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const data = {
-      title,
-      description: description || undefined,
-      priority,
-      plannedStartDate: plannedStartDate || undefined,
-      dueDate: dueDate || undefined,
-    };
+    const data = mode === 'create'
+      ? {
+          title,
+          description: description || undefined,
+          priority,
+          plannedStartDate: plannedStartDate || undefined,
+          dueDate: dueDate || undefined,
+        }
+      : {
+          title,
+          description: description || null,
+          priority,
+          plannedStartDate: plannedStartDate || null,
+          dueDate: dueDate || null,
+        };
 
-    const result = createTicketSchema.safeParse(data);
+    const schema = mode === 'create' ? createTicketSchema : updateTicketSchema;
+    const result = schema.safeParse(data);
 
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};

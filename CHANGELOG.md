@@ -12,6 +12,83 @@
 
 ---
 
+## [main] - 2026-02-19 — 코드베이스 분석 및 엔터프라이즈 운영 가이드 작성
+
+### 🎯 Prompts
+1. "chapter7_monitoring_deployment.md 전체적으로 점검하고 현재 앱이 팀/회사용/SaaS 혹은 온프레미스 환경의 엔터프라이즈로 발전할 때 모니터링, 알림, 엔터프라이즈 환경 배포 등으로 발전해나갈때 적용할 내용으로 문서 다시 만들어 다 되면 docs 밑에 enterprise 폴더에 옮겨"
+2. "코드베이스와 문서들을 분석해서 앞으로 확장해야 할 기능 리스트와 구체적인 구현 계획들을 리서치해서 정리해"
+
+### ✅ Changes
+
+**엔터프라이즈 운영 가이드 작성**
+- **Added**: `docs/enterprise/operations-guide.md` — MVP→팀→SaaS→엔터프라이즈 운영 가이드 (10개 섹션)
+  - 성장 단계별 운영 전략 개요 및 로드맵 테이블
+  - Observability 3기둥 (Logs/Metrics/Traces) + Pino 구조화 로깅 + Prometheus 메트릭
+  - SLI/SLO/SLA 프레임워크 + 에러 버짓 계산
+  - 알림 설계 원칙 (P0~P3) + 온콜/인시던트 대응 + 런북 예시
+  - CI/CD 성숙도 모델 (L0~L4) + GitHub Actions 고급 패턴 + DevSecOps
+  - 배포 전략 (Rolling/Blue-Green/Canary) + Feature Flags + Forward-only 마이그레이션
+  - Docker 프로덕션 최적화 + Kubernetes 매니페스트 + HPA/PDB
+  - Terraform IaC (Vercel+Neon Provider) + GitOps (ArgoCD/Flux)
+  - SaaS 멀티테넌트 (Row-level/Schema/DB-per-tenant) + Drizzle ORM 격리 패턴
+  - 온프레미스 (Docker Compose 번들, Helm 차트, 에어갭) + RBAC/감사 로그 + SOC2/GDPR
+  - 비용 최적화 + Serverless vs 상시 운영 비교
+- **Removed**: `reference/docs/chapter7_monitoring_deployment.md` — 내용이 새 문서에 완전 흡수
+
+**코드베이스 분석 — 확장 기능 리서치 결과**
+
+> 아래는 PRD/TRD/REQUIREMENTS/API_SPEC/COMPONENT_SPEC/TEST_CASES/DATA_MODEL 문서와
+> 실제 코드를 대조 분석한 결과다.
+
+**[A] 현재 버그/스펙 불일치 (Critical)**
+
+| # | 문제 | 파일 | 설명 |
+|---|------|------|------|
+| 1 | DONE→BACKLOG 이동 시 `startedAt` 미초기화 | `ticketService.ts` | API_SPEC 비즈니스 규칙 §7 위반 |
+| 2 | `update()`/`complete()` 응답에 `isOverdue` 누락 | `ticketService.ts` | `toTicket()` 반환 → `toTicketWithMeta()` 필요 |
+| 3 | 편집 폼에서 `createTicketSchema` 사용 | `TicketForm.tsx` | description/날짜 필드 null 클리어 불가 |
+
+**[B] Phase 2 확장 기능 (PRD 2차 범위)**
+
+| # | 기능 | 난이도 | 의존성 |
+|---|------|--------|--------|
+| 1 | Google OAuth 로그인 | 높음 | NextAuth + users 테이블 |
+| 2 | 멀티 유저 / 팀 기능 | 높음 | OAuth 완료 후 |
+| 3 | 라벨(태그) 시스템 | 중간 | labels 테이블 + M:N 관계 |
+| 4 | 티켓 댓글 | 중간 | comments 테이블 + OAuth |
+| 5 | 파일 첨부 | 중간 | S3/Vercel Blob + attachments 테이블 |
+| 6 | 알림/리마인더 | 중간 | 크론잡 또는 Vercel Cron |
+| 7 | 고급 검색/필터링 | 낮음 | API 쿼리 파라미터 확장 |
+| 8 | 다크 모드 | 낮음 | CSS 변수 + Tailwind dark: |
+| 9 | 칼럼 추가/삭제 (어드민) | 중간 | statuses 테이블 동적 관리 |
+
+**[C] 스펙 대비 미구현/미완성**
+
+| # | 항목 | 스펙 문서 | 현재 상태 |
+|---|------|----------|----------|
+| 1 | 반응형 레이아웃 (태블릿 2칼럼, 모바일 탭 전환) | COMPONENT_SPEC NFR-002 | 미구현 |
+| 2 | 키보드 접근성 + 스크린리더 (aria-label, role) | COMPONENT_SPEC NFR-003 | 부분 구현 |
+| 3 | Modal body scroll lock | COMPONENT_SPEC | 미구현 |
+| 4 | Modal open/close 애니메이션 | COMPONENT_SPEC | 미구현 |
+| 5 | DragOverlay `rotate(3deg)` + `opacity: 0.5` | DESIGN_SYSTEM | 미구현 |
+| 6 | `COLUMN_ORDER`/`COLUMN_LABELS` shared 타입 export | 타입 일관성 | 컴포넌트에서 로컬 중복 |
+| 7 | `plannedStartDate` Zod regex 검증 | API_SPEC | 누락 |
+| 8 | `ReorderableStatus` 타입 export | 타입 일관성 | 미export |
+
+**[D] 테스트 커버리지 갭**
+
+| # | 항목 | 테스트 문서 ID | 현재 상태 |
+|---|------|-------------|----------|
+| 1 | TC-API-003 (003-1, 003-4): 단일 티켓 GET 성공 + isOverdue | TC-API-003 | 미작성 |
+| 2 | TC-COMP-003: 반응형 레이아웃 테스트 | TC-COMP-003 | 미작성 |
+| 3 | TC-INT-001~002: 통합 테스트 7개 (DnD 플로우, complete→delete) | TC-INT | 전체 미작성 |
+
+### 📁 Files Modified
+- `docs/enterprise/operations-guide.md` (+850 lines, 새 파일)
+- `reference/docs/chapter7_monitoring_deployment.md` (삭제, -563 lines)
+
+---
+
 ## [chapter7-deploy] - 2026-02-18 21:48
 
 ### 🎯 Prompt

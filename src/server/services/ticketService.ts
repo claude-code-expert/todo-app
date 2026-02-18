@@ -145,7 +145,7 @@ export const ticketService = {
   /**
    * FR-004: Update ticket fields (partial update)
    */
-  async update(id: number, input: UpdateTicketInput): Promise<Ticket> {
+  async update(id: number, input: UpdateTicketInput): Promise<TicketWithMeta> {
     // Build update object with only provided fields
     const updateData: Record<string, unknown> = {};
 
@@ -165,13 +165,13 @@ export const ticketService = {
       throw new TicketNotFoundError(id);
     }
 
-    return toTicket(rows[0]);
+    return toTicketWithMeta(rows[0]);
   },
 
   /**
    * FR-005: Mark ticket as complete
    */
-  async complete(id: number): Promise<Ticket> {
+  async complete(id: number): Promise<TicketWithMeta> {
     // Check ticket exists
     const existing = await db
       .select()
@@ -196,7 +196,7 @@ export const ticketService = {
       .where(eq(tickets.id, id))
       .returning();
 
-    return toTicket(row);
+    return toTicketWithMeta(row);
   },
 
   /**
@@ -240,7 +240,7 @@ export const ticketService = {
       // startedAt business logic
       if (input.status === TICKET_STATUS.TODO && currentTicket.status !== TICKET_STATUS.TODO) {
         updateData.startedAt = new Date();
-      } else if (input.status === TICKET_STATUS.BACKLOG && currentTicket.status === TICKET_STATUS.TODO) {
+      } else if (input.status === TICKET_STATUS.BACKLOG && currentTicket.status !== TICKET_STATUS.BACKLOG) {
         updateData.startedAt = null;
       }
 
