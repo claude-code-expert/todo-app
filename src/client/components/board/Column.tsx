@@ -17,7 +17,7 @@ export function Column({ status, tickets, onTicketClick }: ColumnProps) {
   const ticketIds = tickets.map((t) => t.id);
 
   return (
-    <div className="column">
+    <div className="column" data-status={status}>
       <ColumnHeader title={status} count={tickets.length} />
       <SortableContext items={ticketIds} strategy={verticalListSortingStrategy}>
         <div ref={setNodeRef} className="column-cards">

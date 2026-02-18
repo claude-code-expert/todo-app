@@ -14,6 +14,7 @@ import { Column } from './Column';
 import { TicketCard } from '@/client/components/ticket/TicketCard';
 import { TICKET_STATUS } from '@/shared/types';
 import type { BoardData, TicketWithMeta } from '@/shared/types';
+import type { ReactNode } from 'react';
 
 interface BoardProps {
   board: BoardData;
@@ -21,6 +22,7 @@ interface BoardProps {
   onTicketClick: (ticket: TicketWithMeta) => void;
   onDragStart?: (event: DragStartEvent) => void;
   onDragEnd?: (event: DragEndEvent) => void;
+  filterBar?: ReactNode;
 }
 
 const MAIN_STATUSES = [
@@ -29,7 +31,7 @@ const MAIN_STATUSES = [
   TICKET_STATUS.DONE,
 ] as const;
 
-export function Board({ board, activeTicket, onTicketClick, onDragStart, onDragEnd }: BoardProps) {
+export function Board({ board, activeTicket, onTicketClick, onDragStart, onDragEnd, filterBar }: BoardProps) {
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
@@ -52,6 +54,7 @@ export function Board({ board, activeTicket, onTicketClick, onDragStart, onDragE
           />
         </div>
         <div className="board-main">
+          {filterBar}
           <div className="columns-container">
             {MAIN_STATUSES.map((status) => (
               <Column

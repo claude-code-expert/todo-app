@@ -441,18 +441,15 @@ docs: API_SPEC.md 에러 코드 추가
 - `feature/*`: 기능 개발
 - `fix/*`: 버그 수정
 
-## Recent Changes
+## 디자인 시스템
+스타일링 작업 시 반드시 아래 파일들을 참조할 것:
+- 컬러 토큰 (참조): `src/shared/design/colors.json`
+- 디자인 가이드: `docs/DESIGN_SYSTEM.md`
+- CSS 변수 (런타임): `app/globals.css` `:root`
 
-> 최근 7-14일간의 주요 변경사항을 추적합니다.
-> 전체 히스토리는 [CHANGELOG.md](./CHANGELOG.md) 참조
-
-### 2026-02-14
-- **[chapter6-frontend]** 프런트엔드 Phase 1~5 전체 TDD 구현 완료 (16개 컴포넌트, 102 tests)
-- **[chapter6-frontend]** Phase 4: ticketApi(11), useTickets(10) 데이터 레이어
-- **[chapter6-frontend]** Phase 5: BoardHeader(4), FilterBar(6), BoardContainer(6), page.tsx 컨테이너 조립
-- **[chapter6-frontend]** 서비스 테스트에 `@jest-environment node` 추가, `--runInBand` 설정으로 DB 충돌 해결
-- **[chapter6-frontend]** COMPONENT_SPEC.md §1 컴포넌트 계층 구조 실제 구현 반영
-- **[chapter6-frontend]** 전체 테스트: 26 suites, 169/169 passed
+새 컴포넌트 생성 시 colors.json의 semantic 컬러와
+DESIGN_SYSTEM.md의 간격/그림자/라운딩 규칙을 따른다.
+컬러 변경 시 colors.json과 globals.css의 CSS 변수를 함께 업데이트한다.
 
 ---
 

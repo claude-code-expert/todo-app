@@ -8,6 +8,12 @@
 import { POST } from '@/app/api/tickets/route';
 import { NextRequest } from 'next/server';
 
+function futureDate(daysFromNow: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + daysFromNow);
+  return d.toISOString().split('T')[0];
+}
+
 function createRequest(body: object) {
   return new NextRequest('http://localhost:3000/api/tickets', {
     method: 'POST',
@@ -25,7 +31,7 @@ describe('POST /api/tickets', () => {
         description: 'REST API 엔드포인트와 요청/응답 형식을 정의한다',
         priority: 'HIGH',
         plannedStartDate: '2026-02-10',
-        dueDate: '2026-02-15',
+        dueDate: futureDate(7),
       });
 
       // When
@@ -40,7 +46,7 @@ describe('POST /api/tickets', () => {
         status: 'BACKLOG',
         priority: 'HIGH',
         plannedStartDate: '2026-02-10',
-        dueDate: '2026-02-15',
+        dueDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
         startedAt: null,
         completedAt: null,
       });

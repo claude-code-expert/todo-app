@@ -1,0 +1,36 @@
+{
+  "semantic": {
+    "primary": { "value": "#2563EB", "tailwind": "blue-600" },
+    "danger": { "value": "#DC2626", "tailwind": "red-600" },
+    "success": { "value": "#16A34A", "tailwind": "green-600" },
+    "warning": { "value": "#D97706", "tailwind": "amber-600" }
+  },
+  "background": {
+    "default": { "value": "#F5F6F8", "note": "전체 보드 배경" },
+    "header": { "value": "#FFFFFF", "note": "헤더 배경" },
+    "card": { "value": "#FFFFFF", "note": "카드 배경" },
+    "overlay": { "value": "rgba(0,0,0,0.5)", "note": "모달 오버레이" }
+  },
+  "column": {
+    "backlog": { "value": "#F0EDFA", "accent": "#8B7EC8", "note": "라벤더 파스텔" },
+    "todo": { "value": "#FFF8E1", "accent": "#F59E0B", "note": "옐로 파스텔" },
+    "in_progress": { "value": "#E8F4FD", "accent": "#3B82F6", "note": "블루 파스텔" },
+    "done": { "value": "#E8F5E9", "accent": "#22C55E", "note": "그린 파스텔" }
+  },
+  "border": {
+    "default": { "value": "#E2E8F0" },
+    "column_divider": { "value": "#D1D5DB", "note": "칼럼 간 구분선" },
+    "focus": { "value": "#3B82F6" }
+  },
+  "text": {
+    "heading": { "value": "#111827", "note": "14px bold" },
+    "body": { "value": "#4B5563", "note": "12px regular" },
+    "muted": { "value": "#9CA3AF" },
+    "on_primary": { "value": "#FFFFFF" }
+  },
+  "priority": {
+    "high": { "bg": "#FEE2E2", "text": "#991B1B" },
+    "medium": { "bg": "#DBEAFE", "text": "#1E40AF" },
+    "low": { "bg": "#F3F4F6", "text": "#374151" }
+  }
+}

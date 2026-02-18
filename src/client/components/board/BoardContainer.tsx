@@ -174,20 +174,20 @@ export function BoardContainer({ initialData }: BoardContainerProps) {
   return (
     <>
       <BoardHeader onCreateClick={() => setIsCreating(true)} />
-      <div className="board-main">
-        <FilterBar
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
-          counts={counts}
-        />
-        <Board
-          board={filteredBoard}
-          activeTicket={activeTicket}
-          onTicketClick={(ticket) => setSelectedTicket(ticket)}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        />
-      </div>
+      <Board
+        board={filteredBoard}
+        activeTicket={activeTicket}
+        onTicketClick={(ticket) => setSelectedTicket(ticket)}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        filterBar={
+          <FilterBar
+            activeFilter={activeFilter}
+            onFilterChange={setActiveFilter}
+            counts={counts}
+          />
+        }
+      />
 
       <Modal isOpen={isCreating} onClose={() => setIsCreating(false)}>
         <div className="modal-header">
