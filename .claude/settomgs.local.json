@@ -1,0 +1,9 @@
+{
+  "includeCoAuthoredBy": false,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "model": "sonnet",
+  "skipDangerousModePermissionPrompt": true
+}

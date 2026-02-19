@@ -259,7 +259,7 @@ SaaS 전환 시 SLA에 포함할 항목:
 npx @sentry/wizard@latest -i nextjs
 ```
 
-이 명령으로 `sentry.client.config.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`가 자동 생성되고, `next.config.js`에 Sentry 플러그인이 추가된다. 이후 런타임 에러가 자동으로 Sentry 대시보드에 보고된다.
+이 명령으로 `instrumentation-client.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`, `instrumentation.ts`, `app/global-error.tsx` 등이 자동 생성되고, `next.config.ts`에 `withSentryConfig` 래퍼가 추가된다. 이후 런타임 에러가 자동으로 Sentry 대시보드에 보고된다. (상세 설정은 2.4절 참고)
 
 **Datadog — APM과 인프라 통합 모니터링**
 
@@ -275,6 +275,192 @@ npx @sentry/wizard@latest -i nextjs
 | Tempo | 분산 트레이싱 |
 
 엔터프라이즈 단계에서 벤더 종속을 피하고 싶거나, 온프레미스 환경에서 운영해야 할 때 적합하다. Grafana Cloud를 사용하면 관리 부담 없이 시작할 수 있다.
+
+### 2.4 Sentry 설치 및 연동 가이드 (Step by Step)
+
+Tika와 같은 Next.js 프로젝트에 Sentry를 도입하는 전체 과정을 단계별로 정리한다.
+
+#### Step 1: 설치 및 자동 설정
+
+```bash
+# SDK 설치
+npm install @sentry/nextjs
+
+# 인터랙티브 위저드 실행 (권장)
+npx @sentry/wizard@latest -i nextjs
+```
+
+위저드가 Sentry 프로젝트 DSN, 소스맵 업로드 여부, 인증 토큰을 물어본다. 완료되면 다음 파일들이 자동 생성된다.
+
+| 파일 | 역할 |
+|------|------|
+| `instrumentation-client.ts` | 클라이언트(브라우저) SDK 초기화 |
+| `sentry.server.config.ts` | 서버(Node.js) SDK 초기화 |
+| `sentry.edge.config.ts` | Edge Runtime SDK 초기화 |
+| `instrumentation.ts` | Next.js Instrumentation Hook (서버/엣지 설정 로드) |
+| `app/global-error.tsx` | App Router 전역 에러 바운더리 |
+| `.env.sentry-build-plugin` | 소스맵 업로드용 인증 토큰 |
+| `app/sentry-example-page/` | 테스트용 에러 발생 페이지 |
+
+#### Step 2: 설정 파일 커스터마이징
+
+**클라이언트 설정** (`instrumentation-client.ts`):
+
+```typescript
+import * as Sentry from '@sentry/nextjs';
+
+Sentry.init({
+  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+
+  // 성능 모니터링 — 프로덕션에서는 10%만 샘플링
+  tracesSampleRate: process.env.NODE_ENV === 'development' ? 1.0 : 0.1,
+
+  // 세션 리플레이 — 에러 발생 세션은 100% 기록
+  integrations: [
+    Sentry.replayIntegration(),
+    Sentry.feedbackIntegration({ colorScheme: 'system' }),
+  ],
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0,
+
+  environment: process.env.NODE_ENV,
+});
+```
+
+**서버 설정** (`sentry.server.config.ts`):
+
+```typescript
+import * as Sentry from '@sentry/nextjs';
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  tracesSampleRate: process.env.NODE_ENV === 'development' ? 1.0 : 0.1,
+  debug: process.env.NODE_ENV === 'development',
+  environment: process.env.NODE_ENV,
+});
+```
+
+**Instrumentation Hook** (`instrumentation.ts`):
+
+```typescript
+import * as Sentry from '@sentry/nextjs';
+
+export async function register() {
+  if (process.env.NEXT_RUNTIME === 'nodejs') {
+    await import('./sentry.server.config');
+  }
+  if (process.env.NEXT_RUNTIME === 'edge') {
+    await import('./sentry.edge.config');
+  }
+}
+
+// 서버 측 요청 에러 캡처 (Next.js 15 + @sentry/nextjs >= 8.28.0)
+export const onRequestError = Sentry.captureRequestError;
+```
+
+**`next.config.ts` 래퍼**:
+
+```typescript
+import type { NextConfig } from 'next';
+import { withSentryConfig } from '@sentry/nextjs';
+
+const nextConfig: NextConfig = {
+  output: 'standalone',
+  // ... 기존 설정
+};
+
+export default withSentryConfig(nextConfig, {
+  org: 'your-org-slug',
+  project: 'your-project-slug',
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+
+  // 소스맵: 업로드 후 배포에서 삭제 (보안)
+  sourcemaps: { deleteSourcemapsAfterUpload: true },
+
+  // 광고 차단기 우회: Sentry 요청을 앱 경유
+  tunnelRoute: '/monitoring',
+
+  // 릴리스 추적: Vercel 커밋 SHA 자동 사용
+  release: {
+    name: process.env.VERCEL_GIT_COMMIT_SHA,
+    create: true,
+    finalize: true,
+  },
+
+  silent: !process.env.CI,
+});
+```
+
+#### Step 3: 환경 변수 설정
+
+```bash
+# .env.local (로컬 개발용)
+NEXT_PUBLIC_SENTRY_DSN=https://xxxxx@o0.ingest.us.sentry.io/0
+SENTRY_DSN=https://xxxxx@o0.ingest.us.sentry.io/0
+
+# Vercel 환경 변수에 추가 (프로덕션 배포용)
+SENTRY_AUTH_TOKEN=sntrys_eyJpYXQiOj...
+SENTRY_ORG=your-org-slug
+SENTRY_PROJECT=your-project-slug
+```
+
+DSN은 Sentry 프로젝트의 **Settings > Client Keys (DSN)**에서 확인한다. Auth Token은 **Settings > Auth Tokens**에서 `project:releases`와 `org:ci` 스코프로 생성한다.
+
+#### Step 4: 배포 및 확인
+
+```bash
+# 1. 배포
+git add . && git commit -m "feat: Sentry 에러 모니터링 연동"
+git push origin main
+
+# 2. 테스트 페이지에서 에러 발생
+# https://your-app.vercel.app/sentry-example-page 접속 후 "Throw Error" 클릭
+
+# 3. Sentry 대시보드에서 에러 확인
+# https://sentry.io → 프로젝트 → Issues
+
+# 4. 확인 후 테스트 파일 삭제
+rm -rf app/sentry-example-page app/api/sentry-example-api
+```
+
+#### Step 5: Sentry 대시보드에서 볼 수 있는 항목
+
+| 기능 | 설명 |
+|------|------|
+| **Issues** | 실시간 에러 수집. 스택 트레이스, 브레드크럼, 디바이스/브라우저 정보. 자동 그룹핑. |
+| **Performance** | API 응답 시간 (p50/p75/p95/p99), 처리량, N+1 쿼리 자동 감지 |
+| **Session Replay** | 사용자 세션을 비디오처럼 재생. DOM 스냅샷, 클릭 경로, 콘솔 로그, 네트워크 요청 |
+| **Releases** | 릴리스별 에러 추적. 어떤 배포가 문제를 일으켰는지 식별. 크래시 프리 세션 비율 |
+| **Crons** | 스케줄 작업 모니터링. 작업 누락/실패 시 알림 |
+| **Uptime** | HTTP 엔드포인트 상태 체크. 다운타임 감지 및 알림 |
+| **User Feedback** | 인앱 피드백 위젯. 스크린샷과 사용자 코멘트를 에러에 연결 |
+
+**소스맵 연동 효과**: 프로덕션에서 발생한 에러의 스택 트레이스가 빌드된 코드가 아니라 원본 TypeScript 소스로 표시된다. `withSentryConfig`의 `sourcemaps` 설정이 빌드 시 자동으로 소스맵을 업로드하고 배포 파일에서는 삭제한다.
+
+### 2.5 Node.js 백엔드 모니터링 도구 비교
+
+| 도구 | 주요 기능 | Node.js 지원 | 세션 리플레이 | 무료 티어 | 가격 |
+|------|----------|-------------|-------------|---------|------|
+| **Sentry** | 에러 추적 + 성능 | 우수 (네이티브 SDK) | 있음 | 5K 에러/월 | Team $29/월 |
+| **Highlight.io** | 풀스택 (오픈소스) | 좋음 (Next.js SDK) | 있음 (내장) | 셀프호스트 무료 | $0.35/GB |
+| **Bugsnag** | 에러 안정성 모니터링 | 좋음 (50+ 플랫폼) | 없음 | 14일 체험 | Startup $29/월 |
+| **New Relic** | 풀스택 APM | 우수 (분산 트레이싱) | 있음 | **100GB/월 무료** | $0.40/GB 초과분 |
+| **Datadog** | 엔터프라이즈 APM + 인프라 | 우수 (APM + RUM + 로그) | 있음 (RUM) | 14일 체험 | APM $15/호스트/월 |
+
+**Tika에 대한 추천**:
+
+- **MVP~팀 단계**: Sentry 무료 → 에러 모니터링의 90%를 커버
+- **SaaS 단계**: Sentry Pro + New Relic 무료 (APM, 로그 집계 보완)
+- **엔터프라이즈**: Datadog 또는 Grafana 셀프호스트 (통합 인프라 모니터링)
+
+**Sentry 요금제 비교**:
+
+| 플랜 | 월 가격 | 포함 | 주요 기능 |
+|------|--------|------|----------|
+| **Developer** (무료) | $0 | 5K 에러, 10K 트랜잭션 | 핵심 에러 추적, 성능, 기본 알림 |
+| **Team** | $29 | 50K 에러, 100K 트랜잭션 | Slack/Jira 연동, 릴리스 헬스, 고급 알림 |
+| **Business** | $89 | 100K 에러, 100K 트랜잭션 | 커스텀 대시보드, 데이터 포워딩, AI 디버깅 |
+| **Enterprise** | 별도 문의 | 커스텀 | SSO/SAML, SLA, 전담 지원 |
 
 ---
 
@@ -319,9 +505,9 @@ P0 발생
 | 도구 | 특징 | 가격 (팀/월) |
 |------|------|-------------|
 | **PagerDuty** | 업계 표준, 풍부한 연동 | $21/user |
-| **OpsGenie (Atlassian)** | Jira/Confluence 연동 | $9/user |
+| **Jira Service Management** | Jira/Confluence 연동, OpsGenie 후속 | $22/user |
 | **Grafana OnCall** | 오픈소스, Grafana 통합 | 무료 (셀프호스트) |
-| **incident.io** | Slack 네이티브, 자동화 | $16/user |
+| **incident.io** | Slack 네이티브, 자동화 | $19/user |
 
 **런북(Runbook) — Tika API 장애 대응 예시**:
 
@@ -386,6 +572,425 @@ P0 발생
    → 재발 방지 액션 아이템 도출
    → 비난 없는 문화 (Blameless)
 ```
+
+### 3.3 알림 채널 연동 가이드 (Slack + Telegram)
+
+모니터링 시스템이 에러를 감지하면 적절한 채널로 알림을 보내야 한다. 이 절에서는 Slack과 Telegram을 연동하여 심각도별로 에러 알림을 라우팅하는 전체 과정을 다룬다.
+
+#### 3.3.1 Slack Incoming Webhook 설정
+
+**Step 1: Slack App 생성**
+
+1. [https://api.slack.com/apps?new_app=1](https://api.slack.com/apps?new_app=1) 접속
+2. **"Create New App"** → **"From scratch"** 선택
+3. 앱 이름 입력 (예: `Tika Error Alerts`), 워크스페이스 선택
+4. **"Create App"** 클릭
+
+**Step 2: Incoming Webhooks 활성화**
+
+1. 앱 설정 사이드바에서 **"Incoming Webhooks"** 클릭
+2. **"Activate Incoming Webhooks"** 토글을 **On**으로 변경
+
+**Step 3: Webhook URL 생성**
+
+1. 페이지 하단 **"Add New Webhook to Workspace"** 클릭
+2. 알림을 받을 채널 선택 (예: `#alerts-production`)
+3. **"Allow"** 클릭
+4. 생성된 Webhook URL 복사:
+   ```
+   https://hooks.slack.com/services/TXXXXX/BXXXXX/your-webhook-token
+   ```
+5. `.env.local`에 `SLACK_WEBHOOK_URL`로 저장
+
+**Step 4: Slack 알림 서비스 구현**
+
+```typescript
+// src/server/services/slackNotifierService.ts
+
+interface SlackBlock {
+  type: string;
+  text?: { type: 'plain_text' | 'mrkdwn'; text: string; emoji?: boolean };
+  fields?: Array<{ type: 'mrkdwn' | 'plain_text'; text: string }>;
+  elements?: Array<{ type: string; text: string }>;
+}
+
+interface SlackMessage {
+  text: string;
+  blocks?: SlackBlock[];
+}
+
+export const slackNotifierService = {
+  async send(message: SlackMessage): Promise<{ ok: boolean; error?: string }> {
+    const webhookUrl = process.env.SLACK_WEBHOOK_URL;
+    if (!webhookUrl) {
+      return { ok: false, error: 'SLACK_WEBHOOK_URL not set' };
+    }
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(message),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const body = await response.text();
+        return { ok: false, error: `Slack API error ${response.status}: ${body}` };
+      }
+      return { ok: true };
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : 'Unknown error';
+      return { ok: false, error: msg };
+    }
+  },
+
+  async sendErrorAlert(params: {
+    title: string;
+    severity: 'P0' | 'P1' | 'P2' | 'P3';
+    error: Error | string;
+    environment: string;
+    service?: string;
+    requestUrl?: string;
+  }): Promise<{ ok: boolean; error?: string }> {
+    const errorMessage =
+      params.error instanceof Error ? params.error.message : params.error;
+    const stackTrace =
+      params.error instanceof Error
+        ? params.error.stack?.split('\n').slice(0, 5).join('\n') ?? 'N/A'
+        : 'N/A';
+
+    const severityEmoji: Record<string, string> = {
+      P0: ':rotating_light:', P1: ':warning:',
+      P2: ':large_yellow_circle:', P3: ':information_source:',
+    };
+
+    const blocks: SlackBlock[] = [
+      {
+        type: 'header',
+        text: {
+          type: 'plain_text',
+          text: `${severityEmoji[params.severity]} [${params.severity}] ${params.title}`,
+          emoji: true,
+        },
+      },
+      {
+        type: 'section',
+        fields: [
+          { type: 'mrkdwn', text: `*Severity:*\n${params.severity}` },
+          { type: 'mrkdwn', text: `*Environment:*\n${params.environment}` },
+          { type: 'mrkdwn', text: `*Service:*\n${params.service ?? 'Tika API'}` },
+          { type: 'mrkdwn', text: `*Time:*\n${new Date().toISOString()}` },
+        ],
+      },
+      { type: 'divider' },
+      {
+        type: 'section',
+        text: { type: 'mrkdwn', text: `*Error:*\n\`\`\`${errorMessage}\`\`\`` },
+      },
+      {
+        type: 'section',
+        text: { type: 'mrkdwn', text: `*Stack Trace:*\n\`\`\`${stackTrace}\`\`\`` },
+      },
+    ];
+
+    if (params.requestUrl) {
+      blocks.push({
+        type: 'context',
+        elements: [{ type: 'mrkdwn', text: `Request: \`${params.requestUrl}\`` }],
+      });
+    }
+
+    return this.send({
+      text: `[${params.severity}] ${params.title}: ${errorMessage}`,
+      blocks,
+    });
+  },
+};
+```
+
+Block Kit 메시지 미리보기: [https://app.slack.com/block-kit-builder](https://app.slack.com/block-kit-builder)
+
+**Sentry 기본 Slack 연동** (코드 없이):
+
+Sentry 자체 Slack 연동도 가능하다. Sentry **Settings > Integrations > Slack**에서 워크스페이스를 연결한 후, **Alerts > Create Alert Rule**의 Actions에서 Slack 채널로 알림을 보내도록 설정한다. Sentry가 감지한 에러는 별도 코드 없이 자동으로 Slack에 전달된다.
+
+#### 3.3.2 Telegram Bot 설정
+
+**Step 1: BotFather로 봇 생성**
+
+1. Telegram에서 `@BotFather` 검색 후 채팅 시작
+2. `/newbot` 명령 전송
+3. **표시 이름** 입력 (예: `Tika Error Alerts`)
+4. **사용자명** 입력 (반드시 `bot`으로 끝나야 함, 예: `tika_alerts_bot`)
+5. BotFather가 **Bot Token**을 반환:
+   ```
+   Use this token to access the HTTP API:
+   123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+   ```
+6. `.env.local`에 `TELEGRAM_BOT_TOKEN`으로 저장
+
+**Step 2: 그룹/채널 Chat ID 확인**
+
+1. 봇을 알림 받을 그룹 또는 채널에 추가 (채널은 관리자로)
+2. 그룹에서 아무 메시지 전송
+3. 브라우저에서 다음 URL 접속 (`YOUR_TOKEN` 교체):
+   ```
+   https://api.telegram.org/botYOUR_TOKEN/getUpdates
+   ```
+4. JSON 응답에서 `"chat":{"id":-100XXXXXXXXXX}` 확인
+5. `.env.local`에 `TELEGRAM_CHAT_ID`로 저장 (그룹/채널은 음수)
+
+**Step 3: Telegram 알림 서비스 구현**
+
+```typescript
+// src/server/services/telegramNotifierService.ts
+
+export const telegramNotifierService = {
+  escapeHtml(text: string): string {
+    return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  },
+
+  async sendMessage(params: {
+    text: string;
+    parseMode?: 'MarkdownV2' | 'HTML';
+  }): Promise<{ ok: boolean; error?: string }> {
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+    if (!botToken || !chatId) {
+      return { ok: false, error: 'TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set' };
+    }
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+      const response = await fetch(
+        `https://api.telegram.org/bot${botToken}/sendMessage`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: params.text,
+            parse_mode: params.parseMode,
+          }),
+          signal: controller.signal,
+        }
+      );
+
+      clearTimeout(timeoutId);
+      const data = await response.json();
+
+      if (!data.ok) {
+        return { ok: false, error: `Telegram API: ${data.description ?? 'Unknown'}` };
+      }
+      return { ok: true };
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : 'Unknown error';
+      return { ok: false, error: msg };
+    }
+  },
+
+  async sendErrorAlert(params: {
+    title: string;
+    severity: 'P0' | 'P1' | 'P2' | 'P3';
+    error: Error | string;
+    environment: string;
+    service?: string;
+    requestUrl?: string;
+  }): Promise<{ ok: boolean; error?: string }> {
+    const errorMessage =
+      params.error instanceof Error ? params.error.message : params.error;
+    const stackTrace =
+      params.error instanceof Error
+        ? params.error.stack?.split('\n').slice(0, 5).join('\n') ?? 'N/A'
+        : 'N/A';
+
+    const icon: Record<string, string> = {
+      P0: '🚨', P1: '⚠️', P2: '🟡', P3: 'ℹ️',
+    };
+
+    const esc = this.escapeHtml;
+    // HTML parse_mode 사용 (MarkdownV2보다 이스케이프가 간단)
+    const text = [
+      `${icon[params.severity]} <b>[${params.severity}] ${esc(params.title)}</b>`,
+      '',
+      `<b>Environment:</b> ${esc(params.environment)}`,
+      `<b>Service:</b> ${esc(params.service ?? 'Tika API')}`,
+      `<b>Time:</b> ${esc(new Date().toISOString())}`,
+      '',
+      `<b>Error:</b>`,
+      `<code>${esc(errorMessage)}</code>`,
+      '',
+      `<b>Stack Trace:</b>`,
+      `<pre>${esc(stackTrace)}</pre>`,
+      params.requestUrl ? `\n<b>Request:</b> <code>${esc(params.requestUrl)}</code>` : '',
+    ].filter(Boolean).join('\n');
+
+    return this.sendMessage({ text, parseMode: 'HTML' });
+  },
+};
+```
+
+**Telegram API Rate Limit 주의사항**:
+
+| 제한 | 값 |
+|------|-----|
+| 글로벌 | 봇당 **30 메시지/초** |
+| 그룹 대상 | 같은 그룹에 **~20 메시지/분** |
+| 429 응답 시 | `retry_after` 필드만큼 대기 |
+
+동일 에러의 반복 알림을 방지하기 위해 디바운싱(아래 통합 서비스에 구현)을 적용한다.
+
+#### 3.3.3 통합 알림 서비스 — 심각도별 라우팅
+
+```typescript
+// src/server/services/alertService.ts
+
+import { slackNotifierService } from './slackNotifierService';
+import { telegramNotifierService } from './telegramNotifierService';
+
+type AlertSeverity = 'P0' | 'P1' | 'P2' | 'P3';
+
+interface AlertInput {
+  title: string;
+  severity: AlertSeverity;
+  error: Error | string;
+  service?: string;
+  requestUrl?: string;
+}
+
+// 중복 알림 방지 (1분 이내 동일 에러)
+const recentAlerts = new Map<string, number>();
+const DEDUP_WINDOW_MS = 60_000;
+
+function isDuplicate(input: AlertInput): boolean {
+  const errorMsg = input.error instanceof Error ? input.error.message : input.error;
+  const key = `${input.severity}:${input.title}:${errorMsg.slice(0, 100)}`;
+  const now = Date.now();
+  const lastSent = recentAlerts.get(key);
+
+  if (lastSent && now - lastSent < DEDUP_WINDOW_MS) return true;
+
+  recentAlerts.set(key, now);
+  // 오래된 항목 정리
+  if (recentAlerts.size > 1000) {
+    for (const [k, v] of recentAlerts) {
+      if (v < now - DEDUP_WINDOW_MS) recentAlerts.delete(k);
+    }
+  }
+  return false;
+}
+
+export const alertService = {
+  /**
+   * 심각도별 알림 라우팅:
+   * - P0 (Critical): Slack + Telegram + 로그
+   * - P1 (High):     Slack + Telegram + 로그
+   * - P2 (Medium):   Slack + 로그
+   * - P3 (Low):      로그만
+   */
+  async send(input: AlertInput): Promise<void> {
+    const errorMsg = input.error instanceof Error ? input.error.message : input.error;
+    console.error(`[ALERT][${input.severity}] ${input.title}: ${errorMsg}`);
+
+    // 프로덕션에서만 외부 알림 전송
+    if (process.env.NODE_ENV !== 'production') return;
+    if (isDuplicate(input)) return;
+
+    const environment = process.env.VERCEL_ENV ?? process.env.NODE_ENV ?? 'unknown';
+    const params = { ...input, environment };
+    const routing = {
+      P0: { slack: true, telegram: true },
+      P1: { slack: true, telegram: true },
+      P2: { slack: true, telegram: false },
+      P3: { slack: false, telegram: false },
+    }[input.severity];
+
+    const promises: Array<Promise<unknown>> = [];
+
+    if (routing.slack && process.env.SLACK_WEBHOOK_URL) {
+      promises.push(slackNotifierService.sendErrorAlert(params));
+    }
+    if (routing.telegram && process.env.TELEGRAM_BOT_TOKEN) {
+      promises.push(telegramNotifierService.sendErrorAlert(params));
+    }
+
+    await Promise.allSettled(promises);
+  },
+
+  // 편의 메서드
+  async critical(title: string, error: Error | string, meta?: Partial<AlertInput>) {
+    return this.send({ title, severity: 'P0', error, ...meta });
+  },
+  async high(title: string, error: Error | string, meta?: Partial<AlertInput>) {
+    return this.send({ title, severity: 'P1', error, ...meta });
+  },
+  async medium(title: string, error: Error | string, meta?: Partial<AlertInput>) {
+    return this.send({ title, severity: 'P2', error, ...meta });
+  },
+};
+```
+
+#### 3.3.4 Route Handler에서 사용
+
+```typescript
+// app/api/tickets/route.ts (사용 예시)
+import { alertService } from '@/server/services/alertService';
+
+export async function POST(request: Request) {
+  try {
+    // ... 검증 및 서비스 호출 ...
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('database')) {
+      // DB 에러 → P0 (시스템 장애)
+      await alertService.critical('DB Error: POST /api/tickets', error, {
+        requestUrl: request.url,
+        service: 'tickets-api',
+      });
+    } else {
+      // 기타 에러 → P2
+      await alertService.medium(
+        'Error: POST /api/tickets',
+        error instanceof Error ? error : String(error),
+        { requestUrl: request.url }
+      );
+    }
+
+    return Response.json(
+      { error: { code: 'INTERNAL_ERROR', message: 'Internal server error' } },
+      { status: 500 }
+    );
+  }
+}
+```
+
+#### 3.3.5 환경 변수 요약
+
+```bash
+# .env.local
+# Slack
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/TXXXXX/BXXXXX/your-webhook-token
+
+# Telegram
+TELEGRAM_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+TELEGRAM_CHAT_ID=-100XXXXXXXXXX
+```
+
+#### 3.3.6 심각도별 라우팅 요약
+
+| 심각도 | Slack | Telegram | 콘솔 로그 | 사용 시점 |
+|--------|-------|----------|----------|---------|
+| **P0** | ✅ | ✅ | ✅ | 시스템 다운, 데이터 손실, 보안 사고 |
+| **P1** | ✅ | ✅ | ✅ | 주요 기능 장애 (티켓 생성 불가 등) |
+| **P2** | ✅ | ❌ | ✅ | 성능 저하, 부분 기능 오류 |
+| **P3** | ❌ | ❌ | ✅ | UI 깨짐, 비필수 기능 에러 |
 
 ---
 
@@ -631,7 +1236,7 @@ updates:
 
 ```yaml
 - name: Scan Container Image
-  uses: aquasecurity/trivy-action@master
+  uses: aquasecurity/trivy-action@0.28.0
   with:
     image-ref: 'tika-api:${{ github.sha }}'
     format: 'sarif'
@@ -1040,7 +1645,7 @@ terraform {
     }
     neon = {
       source  = "kislerdm/neon"
-      version = "~> 0.6"
+      version = "~> 0.9"
     }
   }
 }
@@ -1067,7 +1672,7 @@ resource "vercel_project" "tika" {
   name      = "tika-${var.environment}"
   framework = "nextjs"
 
-  git_repository = {
+  git_repository {
     type = "github"
     repo = "your-org/tika"
   }
@@ -1076,7 +1681,7 @@ resource "vercel_project" "tika" {
 resource "vercel_project_environment_variable" "postgres_url" {
   project_id = vercel_project.tika.id
   key        = "POSTGRES_URL"
-  value      = neon_endpoint.main.connection_uri
+  value      = neon_project.tika.connection_uri
   target     = ["production", "preview"]
 }
 ```
@@ -1190,9 +1795,9 @@ export const tickets = pgTable('tickets', {
   title: varchar('title', { length: 255 }).notNull(),
   status: varchar('status', { length: 20 }).notNull(),
   // ...
-}, (table) => ({
-  tenantIdx: index('tickets_tenant_idx').on(table.tenantId),
-}));
+}, (table) => [
+  index('tickets_tenant_idx').on(table.tenantId),
+]);
 ```
 
 ```typescript
@@ -1243,7 +1848,8 @@ export function getTenantId(request: Request): string {
 ALTER TABLE tickets ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY tenant_isolation ON tickets
-  USING (tenant_id = current_setting('app.tenant_id'));
+  USING (tenant_id = current_setting('app.tenant_id'))
+  WITH CHECK (tenant_id = current_setting('app.tenant_id'));
 ```
 
 RLS를 사용하면 애플리케이션 코드에서 `WHERE tenant_id = ?`를 빠뜨려도 다른 테넌트의 데이터에 접근할 수 없다. 안전장치로서 매우 유용하다.
@@ -1357,7 +1963,7 @@ services:
       resources:
         limits:
           cpus: '0.5'
-          memory: 256M
+          memory: 512M
 
   # 리버스 프록시 + SSL
   caddy:
@@ -1394,8 +2000,8 @@ cp .env.example .env
 # 2. 실행
 docker compose -f docker-compose.production.yml up -d
 
-# 3. DB 마이그레이션
-docker compose exec app npx drizzle-kit push
+# 3. DB 마이그레이션 (standalone 이미지에는 drizzle-kit이 없으므로 호스트에서 실행)
+POSTGRES_URL=postgres://tika:${DB_PASSWORD}@localhost:5432/tika npx drizzle-kit push
 
 # 4. 확인
 curl https://your-domain.com/api/health
@@ -1488,7 +2094,7 @@ const ROLES = {
 type Role = keyof typeof ROLES;
 
 export function checkPermission(role: Role, permission: string): boolean {
-  const permissions = ROLES[role];
+  const permissions = ROLES[role] as readonly string[];
   return permissions.includes('*') || permissions.includes(permission);
 }
 ```
@@ -1618,16 +2224,17 @@ export const auditService = {
 
 ### MVP → 팀 전환 시
 
-- [ ] Sentry 무료 계정 설정 (2.3절)
+- [ ] Sentry 설치 및 연동 (2.4절)
 - [ ] GitHub Actions CI 워크플로우 추가 (4.1절 Level 2)
 - [ ] Branch Protection Rules 설정
 - [ ] 구조화된 로깅 도입 (2.1절)
-- [ ] Slack 배포 알림 설정 (3.1절)
+- [ ] Slack 에러 알림 연동 (3.3절)
+- [ ] Telegram 크리티컬 알림 연동 (3.3절)
 
 ### 팀 → SaaS 전환 시
 
 - [ ] SLI/SLO 정의 (2.2절)
-- [ ] PagerDuty/OpsGenie 온콜 설정 (3.2절)
+- [ ] PagerDuty/Jira Service Management 온콜 설정 (3.2절)
 - [ ] 보안 스캐닝 파이프라인 추가 (4.3절)
 - [ ] Feature Flag 시스템 도입 (5.2절)
 - [ ] 멀티테넌트 아키텍처 적용 (8.1절)
