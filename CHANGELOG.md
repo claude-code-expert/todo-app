@@ -12,6 +12,22 @@
 
 ---
 
+## [main] - 2026-02-20 16:16
+
+### 🎯 Prompt
+> See commit message
+
+### ✅ Changes
+
+- **Added**: `.claude/settings.local.json`
+
+### 📁 Files Modified
+
+- `.claude/settings.local.json` (+72, -0 lines)
+
+---
+
+
 ## [main] - 2026-02-19 — 코드베이스 분석 및 엔터프라이즈 운영 가이드 작성
 
 ### 🎯 Prompts
