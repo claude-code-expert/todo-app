@@ -3,7 +3,9 @@
 > 티켓 기반 칸반 보드 할 일 관리 애플리케이션 (MVP)
 > https://ticket-kanban.vercel.app 
 
-![Tika 스크린샷](reference/image/scrshot.png
+![스크린샷](https://github.com/claude-code-expert/todo-app/blob/main/reference/image/scrshot.png?raw=true)
+
+클로드 코드 마스터 책 예제로 6장에 해당 하는 예제 사이트 이다. 
 
 단일 사용자 환경에서 티켓을 생성하고, 4개 칼럼(Backlog, TODO, In Progress, Done) 간 드래그앤드롭으로 상태를 관리하는 칸반 보드 앱이다.
 
