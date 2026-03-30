@@ -38,34 +38,50 @@ function calculateDropPosition(
   overId: number | string
 ): number {
   const filtered = tickets.filter((t) => t.id !== activeId);
+  console.log('[DnD] calculateDropPosition', { activeId, overId, filteredCount: filtered.length, filteredIds: filtered.map(t => t.id) });
 
-  if (filtered.length === 0) return 0;
+  if (filtered.length === 0) {
+    console.log('[DnD] calculateDropPosition → 0 (empty column)');
+    return 0;
+  }
 
   const overIndex = filtered.findIndex((t) => t.id === Number(overId));
+  console.log('[DnD] calculateDropPosition overIndex:', overIndex);
 
   if (overIndex === -1) {
-    return filtered[0].position - 1024;
+    const pos = filtered[0].position - 1024;
+    console.log('[DnD] calculateDropPosition → prepend (overIndex -1):', pos);
+    return pos;
   }
 
   if (overIndex === 0) {
-    return filtered[0].position - 1024;
+    const pos = filtered[0].position - 1024;
+    console.log('[DnD] calculateDropPosition → prepend (overIndex 0):', pos);
+    return pos;
   }
 
   const above = filtered[overIndex - 1].position;
   const below = filtered[overIndex].position;
-  return Math.floor((above + below) / 2);
+  const pos = Math.floor((above + below) / 2);
+  console.log('[DnD] calculateDropPosition → midpoint:', { above, below, pos });
+  return pos;
 }
 
 function findDropTargetStatus(overId: string | number, board: BoardData): TicketStatus | null {
   const statuses = Object.keys(board.board) as TicketStatus[];
+  console.log('[DnD] findDropTargetStatus', { overId, type: typeof overId, statuses });
+
   if (statuses.includes(overId as TicketStatus)) {
+    console.log('[DnD] findDropTargetStatus → column droppable:', overId);
     return overId as TicketStatus;
   }
   for (const status of statuses) {
     if (board.board[status].some((t) => t.id === overId)) {
+      console.log('[DnD] findDropTargetStatus → ticket in column:', status);
       return status;
     }
   }
+  console.log('[DnD] findDropTargetStatus → null (not found)');
   return null;
 }
 
@@ -131,6 +147,7 @@ export function BoardContainer({ initialData }: BoardContainerProps) {
   const handleDragStart = useCallback((event: DragStartEvent) => {
     const ticketId = Number(event.active.id);
     const ticket = findTicketById(board, ticketId);
+    console.log('[DnD] dragStart', { activeId: event.active.id, ticketId, found: !!ticket, ticket });
     setActiveTicket(ticket);
   }, [board]);
 
@@ -138,20 +155,32 @@ export function BoardContainer({ initialData }: BoardContainerProps) {
     setActiveTicket(null);
 
     const { active, over } = event;
-    if (!over) return;
-    if (active.id === over.id) return;
+    console.log('[DnD] dragEnd', { activeId: active.id, overId: over?.id, over });
+
+    if (!over) {
+      console.log('[DnD] dragEnd → cancelled (no over)');
+      return;
+    }
+    if (active.id === over.id) {
+      console.log('[DnD] dragEnd → same position, skipped');
+      return;
+    }
 
     const ticketId = Number(active.id);
     const targetStatus = findDropTargetStatus(over.id, board);
+    console.log('[DnD] dragEnd targetStatus:', targetStatus);
     if (!targetStatus) return;
 
     const sourceTicket = findTicketById(board, ticketId);
+    console.log('[DnD] dragEnd sourceTicket:', sourceTicket);
     if (!sourceTicket) return;
 
     if (targetStatus === TICKET_STATUS.DONE) {
+      console.log('[DnD] dragEnd → complete()', ticketId);
       await complete(ticketId);
     } else {
       const position = calculateDropPosition(board.board[targetStatus], ticketId, over.id);
+      console.log('[DnD] dragEnd → reorder()', { ticketId, targetStatus, position });
       await reorder(ticketId, targetStatus, position);
     }
   }, [board, complete, reorder]);

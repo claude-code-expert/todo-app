@@ -71,6 +71,7 @@ export function useTickets(initialData: BoardData): UseTicketsReturn {
   }, [refreshBoard]);
 
   const reorder = useCallback(async (ticketId: number, status: string, position: number) => {
+    console.log('[DnD] useTickets.reorder called', { ticketId, status, position });
     setError(null);
     const backup = board;
 
@@ -97,15 +98,19 @@ export function useTickets(initialData: BoardData): UseTicketsReturn {
     });
 
     try {
+      console.log('[DnD] useTickets.reorder → API call', { ticketId, status, position });
       await ticketApi.reorder({ ticketId, status: status as 'BACKLOG' | 'TODO' | 'IN_PROGRESS', position });
+      console.log('[DnD] useTickets.reorder → API success, refreshing board');
       await refreshBoard();
     } catch (err) {
+      console.error('[DnD] useTickets.reorder → API error', err);
       setBoard(backup);
       setError(err instanceof Error ? err.message : 'Unknown error');
     }
   }, [board, refreshBoard]);
 
   const complete = useCallback(async (id: number) => {
+    console.log('[DnD] useTickets.complete called', { id });
     setError(null);
     const backup = board;
 
@@ -136,9 +141,12 @@ export function useTickets(initialData: BoardData): UseTicketsReturn {
     });
 
     try {
+      console.log('[DnD] useTickets.complete → API call', { id });
       await ticketApi.complete(id);
+      console.log('[DnD] useTickets.complete → API success, refreshing board');
       await refreshBoard();
     } catch (err) {
+      console.error('[DnD] useTickets.complete → API error', err);
       setBoard(backup);
       setError(err instanceof Error ? err.message : 'Unknown error');
     }

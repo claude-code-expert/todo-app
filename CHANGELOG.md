@@ -12,6 +12,28 @@
 
 ---
 
+## [chapter6-frontend-phase5] - 2026-03-30 22:57
+
+### 🎯 Prompt
+> See commit message
+
+### ✅ Changes
+
+- **Added**: `.vercel/README.txt`
+- **Added**: `.vercel/project.json`
+- **Modified**: `src/client/components/board/BoardContainer.tsx`
+- **Modified**: `src/client/hooks/useTickets.ts`
+
+### 📁 Files Modified
+
+- `.vercel/README.txt` (+11, -0 lines)
+- `.vercel/project.json` (+1, -0 lines)
+- `src/client/components/board/BoardContainer.tsx` (+35, -6 lines)
+- `src/client/hooks/useTickets.ts` (+8, -0 lines)
+
+---
+
+
 ## [chapter6-frontend-phase5] - 2026-02-17 20:42
 
 ### 🎯 Prompt
